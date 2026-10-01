@@ -1,0 +1,236 @@
+// CoffeeRoute data model. See docs/spec.md §4.3.
+// Identifiers are ASCII (`Cafe`, `cafeId`) — the spec's `Café` is not a valid identifier everywhere.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  APPLE
+}
+
+enum CafeStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+model User {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  passwordHash String?
+  authProvider AuthProvider @default(EMAIL)
+  role         UserRole     @default(USER)
+  name         String?
+  avatarUrl    String?
+  bio          String?
+  lastActiveAt DateTime     @default(now())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  refreshTokens RefreshToken[]
+  routes        Route[]
+  checkIns      CheckIn[]
+  following     Follow[]       @relation("follower")
+  followers     Follow[]       @relation("following")
+  favorites     Favorite[]
+  proposedCafes Cafe[]         @relation("proposedCafes")
+  verifiedCafes Cafe[]         @relation("verifiedCafes")
+  reports       Report[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  /// SHA-256 of the opaque token handed to the client; the raw token is never stored.
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Cafe {
+  id           String  @id @default(uuid())
+  name         String
+  slug         String  @unique
+  address      String
+  city         String
+  country      String
+  neighborhood String?
+  latitude     Float
+  longitude    Float
+  /// Generated from latitude/longitude in the migration (PostGIS). Read-only.
+  location     Unsupported("geography(Point, 4326)")? @default(dbgenerated("(st_setsrid(st_makepoint(longitude, latitude), 4326))::geography"))
+  timezone     String  @default("Europe/Madrid")
+  website      String?
+  instagram    String?
+  phone        String?
+
+  /// { monday: { open: "08:00", close: "20:00" }, ... } — see @coffeeroute/shared openingHoursSchema
+  openingHours Json?
+  roasters     String[]
+  brewMethods  String[]
+  /// { machine: "La Marzocco", grinder: "Mahlkönig" }
+  equipment    Json?
+  amenities    String[]
+  priceRange   String   @default("€€")
+
+  status          CafeStatus @default(PENDING)
+  rejectionReason String?
+  verifiedAt      DateTime?
+  verifiedById    String?
+  verifiedBy      User?      @relation("verifiedCafes", fields: [verifiedById], references: [id], onDelete: SetNull)
+  proposedById    String?
+  proposedBy      User?      @relation("proposedCafes", fields: [proposedById], references: [id], onDelete: SetNull)
+
+  averageRating Float @default(0)
+  totalReviews  Int   @default(0)
+  totalCheckIns Int   @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  checkIns   CheckIn[]
+  favorites  Favorite[]
+  routeCafes RouteCafe[]
+  reports    Report[]
+
+  @@index([location], type: Gist)
+  @@index([city, country])
+  @@index([status])
+  @@map("cafes")
+}
+
+model Route {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  city          String
+  country       String
+  isPublic      Boolean  @default(false)
+  /// km
+  totalDistance Float?
+  /// minutes (visits + travel)
+  estimatedTime Int?
+  /// Minutes spent at each café, editable (UC2).
+  visitMinutes  Int      @default(45)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  authorId     String
+  author       User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  /// Set when the route was duplicated from another user's public route (UC5).
+  copiedFromId String?
+  copiedFrom   Route?  @relation("routeCopies", fields: [copiedFromId], references: [id], onDelete: SetNull)
+  copies       Route[] @relation("routeCopies")
+
+  routeCafes RouteCafe[]
+
+  @@index([authorId])
+  @@index([city, isPublic])
+  @@map("routes")
+}
+
+model RouteCafe {
+  id    String  @id @default(uuid())
+  order Int
+  notes String?
+
+  routeId String
+  route   Route  @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  cafeId  String
+  cafe    Cafe   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+
+  @@unique([routeId, cafeId])
+  @@map("route_cafes")
+}
+
+model CheckIn {
+  id             String   @id @default(uuid())
+  ratingCoffee   Int
+  ratingService  Int
+  ratingAmbiance Int
+  notes          String?
+  photos         String[]
+  brewMethods    String[]
+  pricePaid      Float?
+  createdAt      DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cafeId String
+  cafe   Cafe   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, cafeId, createdAt])
+  @@index([cafeId])
+  @@map("check_ins")
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  followerId  String
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cafeId    String
+  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, cafeId])
+  @@map("favorites")
+}
+
+/// User reports of incorrect café info (RF18) or inappropriate content (RNF48).
+model Report {
+  id         String       @id @default(uuid())
+  reason     String
+  details    String?
+  status     ReportStatus @default(OPEN)
+  resolution String?
+  createdAt  DateTime     @default(now())
+  resolvedAt DateTime?
+
+  reporterId String?
+  reporter   User?   @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+  cafeId     String?
+  cafe       Cafe?   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("reports")
+}

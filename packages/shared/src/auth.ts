@@ -57,3 +57,13 @@ export interface AuthResponse {
   user: UserProfile;
   tokens: AuthTokens;
 }
+
+export interface UserStats {
+  checkIns: number;
+  cafesVisited: number;
+  citiesVisited: number;
+  routesCreated: number;
+}
+
+export type MeResponse = UserProfile & { stats: UserStats };
+export type PublicUserResponse = PublicUserProfile & { stats: UserStats };

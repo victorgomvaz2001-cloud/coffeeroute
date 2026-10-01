@@ -20,7 +20,10 @@ const csvArray = <T extends z.ZodType>(item: T) =>
   z.preprocess((value) => {
     if (value === undefined || value === '') return undefined;
     const list = Array.isArray(value) ? value : [value];
-    return list.flatMap((v) => String(v).split(',')).map((v) => v.trim()).filter(Boolean);
+    return list
+      .flatMap((v) => String(v).split(','))
+      .map((v) => v.trim())
+      .filter(Boolean);
   }, z.array(item).optional());
 
 const queryBoolean = z.preprocess(
@@ -122,3 +125,15 @@ export interface Paginated<T> {
 }
 
 export const cafeStatusSchema = z.enum(CAFE_STATUSES);
+
+export const paginationQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
+});
+export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
+
+/** Café as seen by curators in the admin panel. */
+export interface AdminCafe extends CafeDetail {
+  proposedBy: { id: string; name: string | null; email: string } | null;
+  verifiedAt: string | null;
+}

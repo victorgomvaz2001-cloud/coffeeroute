@@ -2,7 +2,8 @@ name: coffeeroute
 
 services:
   postgres:
-    image: postgis/postgis:17-3.5
+    # postgis/postgis has no arm64 build; imresamu/postgis is the multi-arch build by a docker-postgis maintainer.
+    image: imresamu/postgis:17-3.5
     environment:
       POSTGRES_USER: coffeeroute
       POSTGRES_PASSWORD: coffeeroute
