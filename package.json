@@ -1,0 +1,27 @@
+{
+  "name": "coffeeroute",
+  "private": true,
+  "packageManager": "pnpm@10.34.6",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @coffeeroute/api db:migrate",
+    "db:seed": "pnpm --filter @coffeeroute/api db:seed",
+    "db:reset": "pnpm --filter @coffeeroute/api db:reset"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.0",
+    "turbo": "^2.11.0",
+    "typescript": "~5.9.0"
+  }
+}
