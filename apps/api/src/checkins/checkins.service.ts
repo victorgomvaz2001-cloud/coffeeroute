@@ -43,6 +43,9 @@ const alreadyToday = () =>
 const isUniqueViolation = (error: unknown) =>
   error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002';
 
+const isNotFound = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025';
+
 @Injectable()
 export class CheckinsService {
   constructor(
@@ -110,27 +113,37 @@ export class CheckinsService {
 
   async update(id: string, userId: string, input: UpdateInput): Promise<CheckIn> {
     const existing = await this.loadOwned(id, userId);
-    const row = await this.write(existing.cafeId, (tx) =>
-      tx.checkIn.update({
-        where: { id },
-        data: {
-          ratingCoffee: input.ratingCoffee,
-          ratingService: input.ratingService,
-          ratingAmbiance: input.ratingAmbiance,
-          brewMethods: input.brewMethods,
-          // An emptied note is stored as "no note".
-          notes: input.notes === undefined ? undefined : input.notes || null,
-          pricePaid: input.pricePaid,
-        },
-        include: checkInInclude,
-      }),
-    );
-    return toCheckIn(row);
+    try {
+      const row = await this.write(existing.cafeId, (tx) =>
+        tx.checkIn.update({
+          where: { id },
+          data: {
+            ratingCoffee: input.ratingCoffee,
+            ratingService: input.ratingService,
+            ratingAmbiance: input.ratingAmbiance,
+            brewMethods: input.brewMethods,
+            // An emptied note is stored as "no note".
+            notes: input.notes === undefined ? undefined : input.notes || null,
+            pricePaid: input.pricePaid,
+          },
+          include: checkInInclude,
+        }),
+      );
+      return toCheckIn(row);
+    } catch (error) {
+      if (isNotFound(error)) throw notFound();
+      throw error;
+    }
   }
 
   async remove(id: string, userId: string): Promise<void> {
     const existing = await this.loadOwned(id, userId);
-    await this.write(existing.cafeId, (tx) => tx.checkIn.delete({ where: { id } }));
+    try {
+      await this.write(existing.cafeId, (tx) => tx.checkIn.delete({ where: { id } }));
+    } catch (error) {
+      if (isNotFound(error)) throw notFound();
+      throw error;
+    }
   }
 
   /** Runs a write and the café's aggregate refresh atomically, then expires cached searches. */

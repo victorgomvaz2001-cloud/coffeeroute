@@ -9,7 +9,7 @@ const latestVotes = (cafeId: string) => Prisma.sql`
   SELECT DISTINCT ON ("userId") "ratingCoffee", "ratingService", "ratingAmbiance"
   FROM check_ins
   WHERE "cafeId" = ${cafeId}
-  ORDER BY "userId", "createdAt" DESC`;
+  ORDER BY "userId", "createdAt" DESC, id DESC`;
 
 /**
  * Rewrites the café's stored aggregates from its check-ins. Call it inside the transaction

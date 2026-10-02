@@ -143,8 +143,8 @@ export const paginationQuerySchema = z.object({
 });
 export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
 
-/** Café as seen by curators in the admin panel. */
-export interface AdminCafe extends CafeDetail {
+/** Café as seen by curators in the admin panel. No viewer, so no ratings or check-in state. */
+export interface AdminCafe extends Omit<CafeDetail, 'ratings' | 'myCheckInToday'> {
   proposedBy: { id: string; name: string | null; email: string } | null;
   verifiedAt: string | null;
 }

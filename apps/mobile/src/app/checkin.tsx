@@ -6,6 +6,7 @@ import {
   createCheckInSchema,
   MAX_CHECKIN_NOTES_LENGTH,
 } from '@coffeeroute/shared';
+import { useQueryClient } from '@tanstack/react-query';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -118,6 +119,7 @@ function CheckInFormView({ cafeId, cafeName, cafeMethods, existing }: CheckInFor
   const create = useCreateCheckIn();
   const update = useUpdateCheckIn(existing?.id ?? '');
   const remove = useDeleteCheckIn(existing?.id ?? '');
+  const queryClient = useQueryClient();
   const [formError, setFormError] = useState<string | null>(null);
   const { control, handleSubmit, setError, formState } = useForm<
     CheckInForm,
@@ -152,6 +154,9 @@ function CheckInFormView({ cafeId, cafeName, cafeMethods, existing }: CheckInFor
       }
       router.back();
     } catch (error) {
+      if (toApiError(error).code === 'CHECKIN_ALREADY_TODAY') {
+        queryClient.invalidateQueries({ queryKey: ['cafes', 'detail', cafeId] });
+      }
       setFormError(applyApiErrors(error, setError));
     }
   });

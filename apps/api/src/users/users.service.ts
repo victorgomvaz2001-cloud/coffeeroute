@@ -34,7 +34,10 @@ export class UsersService {
   /** GDPR right to erasure (RNF20/RNF21): personal data cascades, proposed cafés are kept anonymised. */
   async deleteMe(userId: string): Promise<void> {
     const touchedCafes = await this.prisma.$transaction(async (tx) => {
-      // Sorted so concurrent deletions lock cafés in the same order.
+      // Lock the user row so a concurrent check-in insert (FK KEY SHARE) waits
+      // until this deletion commits, instead of racing past the scan below.
+      await tx.$queryRaw`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`;
+      // Sorted so recomputes lock cafés in a consistent order.
       const visited = await tx.checkIn.findMany({
         where: { userId },
         distinct: ['cafeId'],

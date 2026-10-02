@@ -81,8 +81,11 @@ export function toCafeDetail(cafe: Cafe, extras: DetailExtras = NO_EXTRAS): Cafe
 export function toAdminCafe(
   cafe: Cafe & { proposedBy: Pick<User, 'id' | 'name' | 'email'> | null },
 ): AdminCafe {
+  // toCafeDetail defaults ratings/myCheckInToday to null when no extras are given; AdminCafe
+  // doesn't carry them at all, so drop them instead of exposing the always-null placeholders.
+  const { ratings: _ratings, myCheckInToday: _myCheckInToday, ...detail } = toCafeDetail(cafe);
   return {
-    ...toCafeDetail(cafe),
+    ...detail,
     proposedBy: cafe.proposedBy,
     verifiedAt: cafe.verifiedAt?.toISOString() ?? null,
   };
