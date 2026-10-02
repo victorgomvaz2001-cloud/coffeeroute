@@ -27,4 +27,6 @@ export const testEnv = {
   THROTTLE_LIMIT_PER_MINUTE: '10000',
   AUTH_THROTTLE_LIMIT_PER_MINUTE: '10000',
   SENTRY_DSN: '',
+  // Deterministic travel times: e2e tests never call Mapbox (see travel-matrix.service.spec.ts).
+  MAPBOX_ACCESS_TOKEN: '',
 };

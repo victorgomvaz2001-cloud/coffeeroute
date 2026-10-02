@@ -20,6 +20,7 @@ import { Env, validateEnv } from './config/env';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { REDIS, RedisModule } from './redis/redis.module';
+import { RoutesModule } from './routes/routes.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -62,6 +63,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     CafesModule,
+    RoutesModule,
     AdminModule,
   ],
   providers: [
