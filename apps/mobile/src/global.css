@@ -1,0 +1,27 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+@import 'nativewind/theme';
+
+/*
+ * CoffeeRoute palette: warm crema surfaces, espresso text, roasted-copper accent.
+ * Semantic tokens switch with the system appearance (RNF13); contrast ≥ 4.5:1 for text (RNF11).
+ */
+@theme {
+  --color-crema-50: #fbf8f4;
+  --color-crema-100: #f4ece2;
+  --color-crema-200: #e8dccd;
+  --color-espresso-500: #8a6e5c;
+  --color-espresso-700: #5a4234;
+  --color-espresso-900: #2b1a12;
+  --color-roast-500: #a4522b;
+  --color-roast-600: #8c4423;
+  --color-roast-300: #e3a17c;
+  --color-leaf-600: #2f7d4f;
+  --color-leaf-300: #7fcf9e;
+  --color-cherry-600: #b3261e;
+  --color-cherry-300: #f2a29c;
+  --color-night-950: #15100d;
+  --color-night-900: #221a15;
+  --color-night-800: #3a2c23;
+}
