@@ -57,7 +57,11 @@ export function toCafeSummary(row: SummarySource, now = new Date()): CafeSummary
   };
 }
 
-export function toCafeDetail(cafe: Cafe): CafeDetail {
+type DetailExtras = Pick<CafeDetail, 'ratings' | 'myCheckInToday'>;
+
+const NO_EXTRAS: DetailExtras = { ratings: null, myCheckInToday: null };
+
+export function toCafeDetail(cafe: Cafe, extras: DetailExtras = NO_EXTRAS): CafeDetail {
   return {
     ...toCafeSummary(cafe),
     website: cafe.website,
@@ -70,6 +74,7 @@ export function toCafeDetail(cafe: Cafe): CafeDetail {
     status: cafe.status,
     rejectionReason: cafe.rejectionReason,
     createdAt: cafe.createdAt.toISOString(),
+    ...extras,
   };
 }
 
