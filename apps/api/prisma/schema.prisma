@@ -180,6 +180,8 @@ model CheckIn {
   photos         String[]
   brewMethods    String[]
   pricePaid      Float?
+  /// Café-local calendar day of the visit (Cafe.timezone): one check-in per user, café and day.
+  visitedOn      DateTime @db.Date
   createdAt      DateTime @default(now())
 
   userId String
@@ -187,8 +189,9 @@ model CheckIn {
   cafeId String
   cafe   Cafe   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, cafeId, createdAt])
+  @@unique([userId, cafeId, visitedOn])
   @@index([cafeId])
+  @@index([userId, createdAt])
   @@map("check_ins")
 }
 
