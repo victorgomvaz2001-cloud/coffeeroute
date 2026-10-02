@@ -86,6 +86,8 @@ export default function RootLayout() {
             options={{ presentation: 'modal', title: 'Proponer un café' }}
           />
           <Stack.Screen name="legal" options={{ title: 'Privacidad y términos' }} />
+          <Stack.Screen name="route-editor" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="routes/[id]" options={{ title: '' }} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

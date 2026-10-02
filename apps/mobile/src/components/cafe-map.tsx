@@ -1,8 +1,9 @@
 import { type CafeSummary } from '@coffeeroute/shared';
 import { router } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import MapView, { Marker, type Region } from 'react-native-maps';
 import { usePalette } from '@/hooks/use-palette';
+import { useRouteDraft } from '@/lib/store/route-draft';
 
 interface CafeMapProps {
   cafes: CafeSummary[];
@@ -24,6 +25,8 @@ export function CafeMap({
 }: CafeMapProps) {
   const ref = useRef<MapView>(null);
   const palette = usePalette();
+  const draftCafes = useRouteDraft((s) => s.cafes);
+  const inRoute = useMemo(() => new Set(draftCafes.map((c) => c.id)), [draftCafes]);
 
   useEffect(() => {
     if (cafes.length === 0) return;
@@ -55,7 +58,8 @@ export function CafeMap({
           description={[cafe.neighborhood, cafe.isOpenNow ? 'Abierto' : 'Cerrado']
             .filter(Boolean)
             .join(' · ')}
-          pinColor={palette.accent}
+          // Cafés already in the route stand out in green.
+          pinColor={inRoute.has(cafe.id) ? '#2f7d4f' : palette.accent}
           onCalloutPress={() => router.push({ pathname: '/cafe/[id]', params: { id: cafe.id } })}
         />
       ))}

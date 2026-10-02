@@ -23,6 +23,11 @@ const envSchema = z.object({
     .string()
     .optional()
     .transform((v) => v || undefined),
+  /** Walking travel times (Matrix API). Without it, routes fall back to straight-line estimates. */
+  MAPBOX_ACCESS_TOKEN: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
 });
 
 export type Env = z.infer<typeof envSchema>;

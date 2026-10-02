@@ -13,6 +13,7 @@ import { ActionSheetIOS, Linking, Platform, Pressable, ScrollView, Text, View } 
 import { OpenBadge, RatingBadge } from '@/components/badges';
 import { Button } from '@/components/button';
 import { Chip } from '@/components/chip';
+import { RouteToggleButton } from '@/components/route-toggle';
 import { Section } from '@/components/section';
 import { EmptyState, LoadingState } from '@/components/states';
 import { usePalette } from '@/hooks/use-palette';
@@ -102,6 +103,7 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
             </Text>
           </View>
           <Button label="Cómo llegar" onPress={chooseMapsApp} />
+          {cafe.status === 'VERIFIED' ? <RouteToggleButton cafe={cafe} /> : null}
         </View>
 
         {cafe.brewMethods.length ? (

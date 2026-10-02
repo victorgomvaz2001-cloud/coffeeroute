@@ -27,7 +27,7 @@ docs/       Especificación y ADRs
 ```bash
 nvm use
 pnpm install
-cp apps/api/.env.example apps/api/.env          # cambia JWT_ACCESS_SECRET y SEED_ADMIN_PASSWORD
+cp apps/api/.env.example apps/api/.env          # cambia JWT_ACCESS_SECRET y SEED_ADMIN_PASSWORD; MAPBOX_ACCESS_TOKEN opcional
 cp apps/admin/.env.example apps/admin/.env.local
 pnpm db:up                                      # PostGIS en :5433 y Redis en :6380
 pnpm db:migrate                                 # aplica las migraciones
@@ -72,27 +72,31 @@ Los e2e de la API usan su propia base de datos `coffeeroute_test` (se crea sola)
 
 Versionada bajo `/api/v1` (RNF35). Swagger en <http://localhost:3000/api/docs>. Errores siempre con la forma `{ statusCode, message, code, fieldErrors? }` y mensajes en español aptos para mostrar al usuario.
 
-| Endpoint                                                                                                                | Acceso                                                                  |
-| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `POST /auth/signup` · `login` · `refresh` · `logout`                                                                    | Público (login/signup limitados a 10 req/min)                           |
-| `GET /cafes?lat&lng&radiusKm&city&q&brewMethods&amenities&priceRange&roaster&openNow&page&limit`                        | Público                                                                 |
-| `GET /cafes/:id`                                                                                                        | Público (los no verificados solo los ven su proponente y los curadores) |
-| `POST /cafes`                                                                                                           | Usuario: propone un café (queda `PENDING`)                              |
-| `GET/PATCH/DELETE /users/me` · `GET /users/:id`                                                                         | Usuario / público                                                       |
-| `GET /admin/cafes/pending` · `GET /admin/cafes/:id` · `PATCH /admin/cafes/:id/verify` · `PATCH /admin/cafes/:id/reject` | ADMIN                                                                   |
-| `GET /health`                                                                                                           | Público: estado de base de datos y Redis                                |
+| Endpoint                                                                                                                | Acceso                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `POST /auth/signup` · `login` · `refresh` · `logout`                                                                    | Público (login/signup limitados a 10 req/min)                              |
+| `GET /cafes?lat&lng&radiusKm&city&q&brewMethods&amenities&priceRange&roaster&openNow&page&limit`                        | Público                                                                    |
+| `GET /cafes/:id`                                                                                                        | Público (los no verificados solo los ven su proponente y los curadores)    |
+| `POST /cafes`                                                                                                           | Usuario: propone un café (queda `PENDING`)                                 |
+| `POST /routes/plan`                                                                                                     | Usuario: tramos, totales y orden óptimo (opcionalmente desde tu ubicación) |
+| `GET /routes/mine` · `POST /routes` · `PATCH/DELETE /routes/:id`                                                        | Usuario (solo el autor modifica)                                           |
+| `GET /routes?city` · `GET /routes/:id`                                                                                  | Público para rutas públicas; las privadas solo las ve su autor             |
+| `GET/PATCH/DELETE /users/me` · `GET /users/:id`                                                                         | Usuario / público                                                          |
+| `GET /admin/cafes/pending` · `GET /admin/cafes/:id` · `PATCH /admin/cafes/:id/verify` · `PATCH /admin/cafes/:id/reject` | ADMIN                                                                      |
+| `GET /health`                                                                                                           | Público: estado de base de datos y Redis                                   |
 
 ## Estado del MVP
 
 Hecho en esta fase:
 
 - **UC1 / UC3:** búsqueda por ubicación o ciudad, filtros, mapa y lista. **UC6:** propuesta y verificación de cafés. Auth email/contraseña y perfil con estadísticas.
+- **UC2 / RF3-6 / RF16:** rutas de 2-10 cafés con orden óptimo exacto, tiempos a pie de Mapbox (con respaldo), notas, edición, borrado y exportación a Google/Apple Maps ([ADR 0011](docs/adr/0011-route-planning.md)).
 - Modelo de datos completo del MVP (rutas, check-ins, follows, favoritos y reportes ya existen en la BD).
 - CI en GitHub Actions: formato, lint, typecheck, tests (incluidos e2e con PostGIS) y build.
 
 Pendiente:
 
-- Rutas (UC2, UC7) con optimización TSP, check-ins y valoraciones (UC4), modo offline (UC8).
+- «Iniciar ruta» guiada (UC7), división en varios días (UC3), check-ins y valoraciones (UC4), modo offline (UC8).
 - Google y Apple Sign-In (RF20). Notificar al proponente cuando se verifica o rechaza su café.
 - Sentry en el móvil, subida de imágenes, despliegue (Railway) y migración a Mapbox ([ADR 0007](docs/adr/0007-react-native-maps-interim.md)).
 
