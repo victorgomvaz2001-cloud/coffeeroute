@@ -10,7 +10,15 @@ export function LoginForm() {
   return (
     <form action={action} className="space-y-4" noValidate>
       {state.error ? <Notice tone="error">{state.error}</Notice> : null}
-      <Field label="Email" name="email" type="email" autoComplete="username" defaultValue={state.values?.email} error={state.fieldErrors?.email} required />
+      <Field
+        label="Email"
+        name="email"
+        type="email"
+        autoComplete="username"
+        defaultValue={state.values?.email}
+        error={state.fieldErrors?.email}
+        required
+      />
       <Field
         label="Contraseña"
         name="password"

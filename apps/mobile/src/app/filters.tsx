@@ -25,14 +25,19 @@ export default function FiltersSheet() {
     <View className="flex-1 bg-crema-50 dark:bg-night-950">
       <ScrollView contentContainerClassName="gap-7 p-5 pb-10">
         <View className="flex-row items-center justify-between">
-          <Text accessibilityRole="header" className="text-2xl font-bold text-espresso-900 dark:text-crema-100">
+          <Text
+            accessibilityRole="header"
+            className="text-2xl font-bold text-espresso-900 dark:text-crema-100"
+          >
             Filtros
           </Text>
           {count ? <Button label="Quitar todos" variant="ghost" onPress={filters.reset} /> : null}
         </View>
 
         <View className="flex-row items-center justify-between rounded-2xl bg-white p-4 dark:bg-night-900">
-          <Text className="text-base font-medium text-espresso-900 dark:text-crema-100">Abierto ahora</Text>
+          <Text className="text-base font-medium text-espresso-900 dark:text-crema-100">
+            Abierto ahora
+          </Text>
           <Switch
             accessibilityLabel="Mostrar solo cafés abiertos ahora"
             value={filters.openNow}

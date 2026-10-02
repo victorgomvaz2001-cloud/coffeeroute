@@ -29,7 +29,10 @@ export default function LoginScreen() {
   });
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-crema-50 dark:bg-night-950">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      className="flex-1 bg-crema-50 dark:bg-night-950"
+    >
       <ScrollView contentContainerClassName="gap-5 p-5" keyboardShouldPersistTaps="handled">
         <Text className="text-base text-espresso-700 dark:text-crema-200">
           Inicia sesión para guardar rutas, hacer check-in y proponer cafés.

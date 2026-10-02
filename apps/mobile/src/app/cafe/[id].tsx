@@ -31,8 +31,11 @@ export default function CafeScreen() {
       <EmptyState
         icon={error.statusCode === 404 ? 'cafe-outline' : 'cloud-offline-outline'}
         title={error.statusCode === 404 ? 'Café no disponible' : 'No se ha podido cargar'}
-        message={error.message}>
-        {error.statusCode !== 404 ? <Button label="Reintentar" onPress={() => void cafe.refetch()} /> : null}
+        message={error.message}
+      >
+        {error.statusCode !== 404 ? (
+          <Button label="Reintentar" onPress={() => void cafe.refetch()} />
+        ) : null}
       </EmptyState>
     );
   }
@@ -45,7 +48,11 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
   const chooseMapsApp = () => {
     if (Platform.OS !== 'ios') return void openDirections(cafe, 'google');
     ActionSheetIOS.showActionSheetWithOptions(
-      { title: 'Cómo llegar', options: ['Apple Maps', 'Google Maps', 'Cancelar'], cancelButtonIndex: 2 },
+      {
+        title: 'Cómo llegar',
+        options: ['Apple Maps', 'Google Maps', 'Cancelar'],
+        cancelButtonIndex: 2,
+      },
       (index) => {
         if (index === 0) void openDirections(cafe, 'apple');
         if (index === 1) void openDirections(cafe, 'google');
@@ -56,7 +63,10 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
   return (
     <>
       <Stack.Screen options={{ title: cafe.name }} />
-      <ScrollView className="flex-1 bg-crema-50 dark:bg-night-950" contentContainerClassName="gap-7 p-5 pb-12">
+      <ScrollView
+        className="flex-1 bg-crema-50 dark:bg-night-950"
+        contentContainerClassName="gap-7 p-5 pb-12"
+      >
         {cafe.status !== 'VERIFIED' ? (
           <View className="rounded-2xl bg-crema-100 p-4 dark:bg-night-900">
             <Text className="text-base text-espresso-900 dark:text-crema-100">
@@ -68,21 +78,28 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
         ) : null}
 
         <View className="gap-2">
-          <Text accessibilityRole="header" className="text-3xl font-bold text-espresso-900 dark:text-crema-100">
+          <Text
+            accessibilityRole="header"
+            className="text-3xl font-bold text-espresso-900 dark:text-crema-100"
+          >
             {cafe.name}
           </Text>
           <Text className="text-base text-espresso-700 dark:text-crema-200">{place}</Text>
           <View className="flex-row flex-wrap items-center gap-x-4 gap-y-1 pt-1">
             <OpenBadge open={cafe.isOpenNow} />
             <RatingBadge rating={cafe.averageRating} reviews={cafe.totalReviews} />
-            <Text className="text-sm font-semibold text-espresso-700 dark:text-crema-200">{cafe.priceRange}</Text>
+            <Text className="text-sm font-semibold text-espresso-700 dark:text-crema-200">
+              {cafe.priceRange}
+            </Text>
           </View>
         </View>
 
         <View className="gap-3 rounded-3xl bg-white p-4 dark:bg-night-900">
           <View className="flex-row items-start gap-3">
             <Ionicons name="location-outline" size={20} color="#a4522b" />
-            <Text className="flex-1 text-base text-espresso-900 dark:text-crema-100">{cafe.address}</Text>
+            <Text className="flex-1 text-base text-espresso-900 dark:text-crema-100">
+              {cafe.address}
+            </Text>
           </View>
           <Button label="Cómo llegar" onPress={chooseMapsApp} />
         </View>
@@ -99,15 +116,21 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
 
         {cafe.roasters.length ? (
           <Section title="Tostadores">
-            <Text className="text-base text-espresso-900 dark:text-crema-100">{cafe.roasters.join(' · ')}</Text>
+            <Text className="text-base text-espresso-900 dark:text-crema-100">
+              {cafe.roasters.join(' · ')}
+            </Text>
           </Section>
         ) : null}
 
         {cafe.equipment?.machine || cafe.equipment?.grinder ? (
           <Section title="Equipamiento">
             <View className="gap-1">
-              {cafe.equipment.machine ? <InfoRow label="Máquina" value={cafe.equipment.machine} /> : null}
-              {cafe.equipment.grinder ? <InfoRow label="Molino" value={cafe.equipment.grinder} /> : null}
+              {cafe.equipment.machine ? (
+                <InfoRow label="Máquina" value={cafe.equipment.machine} />
+              ) : null}
+              {cafe.equipment.grinder ? (
+                <InfoRow label="Molino" value={cafe.equipment.grinder} />
+              ) : null}
             </View>
           </Section>
         ) : null}
@@ -127,7 +150,9 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
         {cafe.website || cafe.instagram || cafe.phone ? (
           <Section title="Contacto">
             <View className="gap-1">
-              {cafe.website ? <LinkRow icon="globe-outline" label="Web" url={cafe.website} /> : null}
+              {cafe.website ? (
+                <LinkRow icon="globe-outline" label="Web" url={cafe.website} />
+              ) : null}
               {cafe.instagram ? (
                 <LinkRow
                   icon="logo-instagram"
@@ -135,7 +160,9 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
                   url={`https://instagram.com/${cafe.instagram.replace(/^@/, '')}`}
                 />
               ) : null}
-              {cafe.phone ? <LinkRow icon="call-outline" label={cafe.phone} url={`tel:${cafe.phone}`} /> : null}
+              {cafe.phone ? (
+                <LinkRow icon="call-outline" label={cafe.phone} url={`tel:${cafe.phone}`} />
+              ) : null}
             </View>
           </Section>
         ) : null}
@@ -148,18 +175,29 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row justify-between gap-4 py-1">
       <Text className="text-base text-espresso-700 dark:text-crema-200">{label}</Text>
-      <Text className="flex-1 text-right text-base font-medium text-espresso-900 dark:text-crema-100">{value}</Text>
+      <Text className="flex-1 text-right text-base font-medium text-espresso-900 dark:text-crema-100">
+        {value}
+      </Text>
     </View>
   );
 }
 
-function LinkRow({ icon, label, url }: { icon: ComponentProps<typeof Ionicons>['name']; label: string; url: string }) {
+function LinkRow({
+  icon,
+  label,
+  url,
+}: {
+  icon: ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  url: string;
+}) {
   const palette = usePalette();
   return (
     <Pressable
       accessibilityRole="link"
       onPress={() => void Linking.openURL(url)}
-      className="min-h-11 flex-row items-center gap-3 active:opacity-70">
+      className="min-h-11 flex-row items-center gap-3 active:opacity-70"
+    >
       <Ionicons name={icon} size={20} color={palette.accent} />
       <Text className="text-base text-roast-600 dark:text-roast-300">{label}</Text>
     </Pressable>

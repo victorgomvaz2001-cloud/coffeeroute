@@ -62,7 +62,12 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={theme}>
-        <Stack screenOptions={{ headerTintColor: palette.accent, headerBackButtonDisplayMode: 'minimal' }}>
+        <Stack
+          screenOptions={{
+            headerTintColor: palette.accent,
+            headerBackButtonDisplayMode: 'minimal',
+          }}
+        >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="cafe/[id]" options={{ title: '' }} />
           <Stack.Screen
@@ -76,7 +81,10 @@ export default function RootLayout() {
           />
           <Stack.Screen name="login" options={{ presentation: 'modal', title: 'Iniciar sesión' }} />
           <Stack.Screen name="signup" options={{ presentation: 'modal', title: 'Crear cuenta' }} />
-          <Stack.Screen name="propose" options={{ presentation: 'modal', title: 'Proponer un café' }} />
+          <Stack.Screen
+            name="propose"
+            options={{ presentation: 'modal', title: 'Proponer un café' }}
+          />
           <Stack.Screen name="legal" options={{ title: 'Privacidad y términos' }} />
         </Stack>
         <StatusBar style="auto" />

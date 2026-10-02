@@ -28,6 +28,7 @@ export function useCafe(id: string | undefined) {
 
 export function useProposeCafe() {
   return useMutation({
-    mutationFn: async (input: ProposeCafeInput) => (await api.post<CafeDetail>('/cafes', input)).data,
+    mutationFn: async (input: ProposeCafeInput) =>
+      (await api.post<CafeDetail>('/cafes', input)).data,
   });
 }

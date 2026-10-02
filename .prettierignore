@@ -6,3 +6,6 @@ coverage
 apps/api/src/generated
 apps/api/prisma/migrations
 docs/spec.md
+.claude
+apps/mobile/nativewind-env.d.ts
+apps/admin/next-env.d.ts

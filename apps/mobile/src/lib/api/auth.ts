@@ -13,7 +13,8 @@ export const meQueryKey = ['me'] as const;
 export function useLogin() {
   const setSession = useSession((s) => s.setSession);
   return useMutation({
-    mutationFn: async (input: LoginInput) => (await api.post<AuthResponse>('/auth/login', input)).data,
+    mutationFn: async (input: LoginInput) =>
+      (await api.post<AuthResponse>('/auth/login', input)).data,
     onSuccess: setSession,
   });
 }
@@ -21,7 +22,8 @@ export function useLogin() {
 export function useSignup() {
   const setSession = useSession((s) => s.setSession);
   return useMutation({
-    mutationFn: async (input: SignupInput) => (await api.post<AuthResponse>('/auth/signup', input)).data,
+    mutationFn: async (input: SignupInput) =>
+      (await api.post<AuthResponse>('/auth/signup', input)).data,
     onSuccess: setSession,
   });
 }

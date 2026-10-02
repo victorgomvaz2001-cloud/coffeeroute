@@ -20,9 +20,14 @@ export default function ProfileScreen() {
         <EmptyState
           icon="person-circle-outline"
           title="Tu perfil cafetero"
-          message="Crea una cuenta para guardar rutas, hacer check-in y proponer cafés.">
+          message="Crea una cuenta para guardar rutas, hacer check-in y proponer cafés."
+        >
           <Button label="Crear cuenta" onPress={() => router.push('/signup')} />
-          <Button label="Ya tengo cuenta" variant="secondary" onPress={() => router.push('/login')} />
+          <Button
+            label="Ya tengo cuenta"
+            variant="secondary"
+            onPress={() => router.push('/login')}
+          />
         </EmptyState>
       )}
     </View>
@@ -56,7 +61,10 @@ function SignedInProfile() {
   return (
     <ScrollView contentContainerClassName="gap-7 p-5 pb-12">
       <View className="gap-1">
-        <Text accessibilityRole="header" className="text-3xl font-bold text-espresso-900 dark:text-crema-100">
+        <Text
+          accessibilityRole="header"
+          className="text-3xl font-bold text-espresso-900 dark:text-crema-100"
+        >
           {user?.name ?? 'Tu perfil'}
         </Text>
         <Text className="text-base text-espresso-700 dark:text-crema-200">{user?.email}</Text>
@@ -73,17 +81,39 @@ function SignedInProfile() {
         <Text className="text-base text-espresso-700 dark:text-crema-200">
           ¿Conoces un café de especialidad que no está en CoffeeRoute? Propónlo y lo revisaremos.
         </Text>
-        <Button label="Proponer un café" variant="secondary" onPress={() => router.push('/propose')} />
+        <Button
+          label="Proponer un café"
+          variant="secondary"
+          onPress={() => router.push('/propose')}
+        />
       </Section>
 
       <Section title="Privacidad">
-        <Button label="Permisos de ubicación" variant="secondary" onPress={() => void Linking.openSettings()} />
-        <Button label="Privacidad y términos" variant="secondary" onPress={() => router.push('/legal')} />
+        <Button
+          label="Permisos de ubicación"
+          variant="secondary"
+          onPress={() => void Linking.openSettings()}
+        />
+        <Button
+          label="Privacidad y términos"
+          variant="secondary"
+          onPress={() => router.push('/legal')}
+        />
       </Section>
 
       <View className="gap-3">
-        <Button label="Cerrar sesión" variant="secondary" loading={logout.isPending} onPress={() => logout.mutate()} />
-        <Button label="Eliminar cuenta" variant="danger" loading={deleteAccount.isPending} onPress={confirmDelete} />
+        <Button
+          label="Cerrar sesión"
+          variant="secondary"
+          loading={logout.isPending}
+          onPress={() => logout.mutate()}
+        />
+        <Button
+          label="Eliminar cuenta"
+          variant="danger"
+          loading={deleteAccount.isPending}
+          onPress={confirmDelete}
+        />
       </View>
     </ScrollView>
   );
@@ -94,8 +124,11 @@ function Stat({ label, value }: { label: string; value: number | undefined }) {
     <View
       accessible
       accessibilityLabel={`${label}: ${value ?? 'cargando'}`}
-      className="min-w-[46%] flex-1 gap-1 rounded-2xl bg-white p-4 dark:bg-night-900">
-      <Text className="text-2xl font-bold text-espresso-900 dark:text-crema-100">{value ?? '–'}</Text>
+      className="min-w-[46%] flex-1 gap-1 rounded-2xl bg-white p-4 dark:bg-night-900"
+    >
+      <Text className="text-2xl font-bold text-espresso-900 dark:text-crema-100">
+        {value ?? '–'}
+      </Text>
       <Text className="text-sm text-espresso-700 dark:text-crema-200">{label}</Text>
     </View>
   );

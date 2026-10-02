@@ -24,7 +24,14 @@ interface ButtonProps extends Omit<PressableProps, 'children'> {
   className?: string;
 }
 
-export function Button({ label, variant = 'primary', loading, disabled, className = '', ...props }: ButtonProps) {
+export function Button({
+  label,
+  variant = 'primary',
+  loading,
+  disabled,
+  className = '',
+  ...props
+}: ButtonProps) {
   const palette = usePalette();
   const isDisabled = disabled || loading;
   return (
@@ -33,7 +40,8 @@ export function Button({ label, variant = 'primary', loading, disabled, classNam
       accessibilityState={{ disabled: isDisabled, busy: loading }}
       disabled={isDisabled}
       className={`min-h-12 flex-row items-center justify-center rounded-2xl px-5 active:opacity-80 ${containers[variant]} ${isDisabled ? 'opacity-50' : ''} ${className}`}
-      {...props}>
+      {...props}
+    >
       {loading ? (
         <ActivityIndicator color={variant === 'primary' ? palette.onAccent : palette.accent} />
       ) : (

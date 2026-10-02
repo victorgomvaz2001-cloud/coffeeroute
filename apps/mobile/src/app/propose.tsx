@@ -25,7 +25,14 @@ import { useSession } from '@/lib/store/session';
 
 // Coordinates come from geocoding the address (or the device), not from the user.
 const formSchema = proposeCafeSchema
-  .omit({ latitude: true, longitude: true, roasters: true, timezone: true, openingHours: true, equipment: true })
+  .omit({
+    latitude: true,
+    longitude: true,
+    roasters: true,
+    timezone: true,
+    openingHours: true,
+    equipment: true,
+  })
   .extend({
     roasters: z.string().max(400),
     website: z.union([z.url('URL no válida'), z.literal('')]).optional(),
@@ -51,7 +58,11 @@ function ProposeCafeForm() {
   const propose = useProposeCafe();
   const [formError, setFormError] = useState<string | null>(null);
   const [deviceCoords, setDeviceCoords] = useState<Coords | null>(null);
-  const { control, handleSubmit, setError, formState } = useForm<ProposeForm, unknown, ProposeValues>({
+  const { control, handleSubmit, setError, formState } = useForm<
+    ProposeForm,
+    unknown,
+    ProposeValues
+  >({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -91,7 +102,9 @@ function ProposeCafeForm() {
     setFormError(null);
     const coords = deviceCoords ?? (await geocode(values));
     if (!coords) {
-      setFormError('No encontramos esa dirección. Revísala o, si estás en el café, usa tu ubicación actual.');
+      setFormError(
+        'No encontramos esa dirección. Revísala o, si estás en el café, usa tu ubicación actual.',
+      );
       return;
     }
     try {
@@ -101,7 +114,10 @@ function ProposeCafeForm() {
         neighborhood: values.neighborhood || undefined,
         instagram: values.instagram || undefined,
         website: values.website || undefined,
-        roasters: values.roasters.split(',').map((r) => r.trim()).filter(Boolean),
+        roasters: values.roasters
+          .split(',')
+          .map((r) => r.trim())
+          .filter(Boolean),
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
       Alert.alert('¡Gracias!', 'Un curador revisará el café antes de publicarlo.');
@@ -111,7 +127,19 @@ function ProposeCafeForm() {
     }
   });
 
-  const text = (name: 'name' | 'address' | 'city' | 'country' | 'neighborhood' | 'roasters' | 'website' | 'instagram', label: string, extra: object = {}) => (
+  const text = (
+    name:
+      | 'name'
+      | 'address'
+      | 'city'
+      | 'country'
+      | 'neighborhood'
+      | 'roasters'
+      | 'website'
+      | 'instagram',
+    label: string,
+    extra: object = {},
+  ) => (
     <Controller
       control={control}
       name={name}
@@ -129,7 +157,10 @@ function ProposeCafeForm() {
   );
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-crema-50 dark:bg-night-950">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      className="flex-1 bg-crema-50 dark:bg-night-950"
+    >
       <ScrollView contentContainerClassName="gap-6 p-5 pb-12" keyboardShouldPersistTaps="handled">
         <Text className="text-base text-espresso-700 dark:text-crema-200">
           Cuéntanos lo que sepas. Un curador completará horario y equipamiento al verificarlo.
@@ -144,12 +175,18 @@ function ProposeCafeForm() {
         <Section title="Dónde está">
           {text('address', 'Dirección', { textContentType: 'streetAddressLine1' })}
           <View className="flex-row gap-3">
-            <View className="flex-1">{text('city', 'Ciudad', { textContentType: 'addressCity' })}</View>
-            <View className="flex-1">{text('country', 'País', { textContentType: 'countryName' })}</View>
+            <View className="flex-1">
+              {text('city', 'Ciudad', { textContentType: 'addressCity' })}
+            </View>
+            <View className="flex-1">
+              {text('country', 'País', { textContentType: 'countryName' })}
+            </View>
           </View>
           {text('neighborhood', 'Barrio (opcional)')}
           <Button
-            label={deviceCoords ? 'Ubicación actual guardada ✓' : 'Estoy en el café: usar mi ubicación'}
+            label={
+              deviceCoords ? 'Ubicación actual guardada ✓' : 'Estoy en el café: usar mi ubicación'
+            }
             variant="secondary"
             onPress={() => void pickDeviceLocation()}
           />
@@ -169,7 +206,11 @@ function ProposeCafeForm() {
                       label={BREW_METHOD_LABELS[method]}
                       selected={selected}
                       onPress={() =>
-                        field.onChange(selected ? field.value?.filter((m) => m !== method) : [...(field.value ?? []), method])
+                        field.onChange(
+                          selected
+                            ? field.value?.filter((m) => m !== method)
+                            : [...(field.value ?? []), method],
+                        )
                       }
                     />
                   );
@@ -193,7 +234,11 @@ function ProposeCafeForm() {
                       label={AMENITY_LABELS[amenity]}
                       selected={selected}
                       onPress={() =>
-                        field.onChange(selected ? field.value?.filter((a) => a !== amenity) : [...(field.value ?? []), amenity])
+                        field.onChange(
+                          selected
+                            ? field.value?.filter((a) => a !== amenity)
+                            : [...(field.value ?? []), amenity],
+                        )
                       }
                     />
                   );
@@ -210,7 +255,12 @@ function ProposeCafeForm() {
             render={({ field }) => (
               <View className="flex-row gap-2">
                 {PRICE_RANGES.map((price) => (
-                  <Chip key={price} label={price} selected={field.value === price} onPress={() => field.onChange(price)} />
+                  <Chip
+                    key={price}
+                    label={price}
+                    selected={field.value === price}
+                    onPress={() => field.onChange(price)}
+                  />
                 ))}
               </View>
             )}
@@ -218,7 +268,11 @@ function ProposeCafeForm() {
         </Section>
 
         <Section title="En internet (opcional)">
-          {text('website', 'Web', { autoCapitalize: 'none', keyboardType: 'url', placeholder: 'https://' })}
+          {text('website', 'Web', {
+            autoCapitalize: 'none',
+            keyboardType: 'url',
+            placeholder: 'https://',
+          })}
           {text('instagram', 'Instagram', { autoCapitalize: 'none', placeholder: '@usuario' })}
         </Section>
 

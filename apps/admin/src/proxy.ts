@@ -42,8 +42,11 @@ export async function proxy(request: NextRequest) {
   const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
 
   if (!isExpired(claims)) {
-    if (claims?.role !== 'ADMIN') return isLogin ? NextResponse.next() : toLogin(request, 'forbidden');
-    return isLogin ? NextResponse.redirect(new URL('/cafes/pending', request.url)) : NextResponse.next();
+    if (claims?.role !== 'ADMIN')
+      return isLogin ? NextResponse.next() : toLogin(request, 'forbidden');
+    return isLogin
+      ? NextResponse.redirect(new URL('/cafes/pending', request.url))
+      : NextResponse.next();
   }
 
   if (!refreshToken) return isLogin ? NextResponse.next() : toLogin(request);

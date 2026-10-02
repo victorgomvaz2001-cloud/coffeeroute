@@ -46,7 +46,9 @@ export function readAccessClaims(token: string | undefined): AccessClaims | null
   const payload = token?.split('.')[1];
   if (!payload) return null;
   try {
-    const json = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as Partial<AccessClaims>;
+    const json = JSON.parse(
+      Buffer.from(payload, 'base64url').toString('utf8'),
+    ) as Partial<AccessClaims>;
     return json.sub && json.role && typeof json.exp === 'number' ? (json as AccessClaims) : null;
   } catch {
     return null;

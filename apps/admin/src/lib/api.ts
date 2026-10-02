@@ -19,7 +19,10 @@ interface ApiOptions {
 }
 
 /** Server-side fetch to the CoffeeRoute API with the curator's access token. */
-export async function api<T>(path: string, { method = 'GET', body, anonymous }: ApiOptions = {}): Promise<T> {
+export async function api<T>(
+  path: string,
+  { method = 'GET', body, anonymous }: ApiOptions = {},
+): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   if (!anonymous) {

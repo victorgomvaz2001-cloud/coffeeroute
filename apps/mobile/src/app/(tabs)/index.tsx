@@ -38,7 +38,9 @@ export default function ExploreScreen() {
 
   // Until the user searches, follow their location.
   const effectiveTarget = useMemo<SearchTarget | null>(
-    () => target ?? (location.coords ? { kind: 'near', ...location.coords, label: 'Cerca de ti' } : null),
+    () =>
+      target ??
+      (location.coords ? { kind: 'near', ...location.coords, label: 'Cerca de ti' } : null),
     [target, location.coords],
   );
 
@@ -52,9 +54,21 @@ export default function ExploreScreen() {
       limit: 100,
     };
     return effectiveTarget.kind === 'near'
-      ? { ...shared, lat: effectiveTarget.latitude, lng: effectiveTarget.longitude, radiusKm: filters.radiusKm }
+      ? {
+          ...shared,
+          lat: effectiveTarget.latitude,
+          lng: effectiveTarget.longitude,
+          radiusKm: filters.radiusKm,
+        }
       : { ...shared, q: effectiveTarget.q };
-  }, [effectiveTarget, filters.openNow, filters.brewMethods, filters.amenities, filters.priceRange, filters.radiusKm]);
+  }, [
+    effectiveTarget,
+    filters.openNow,
+    filters.brewMethods,
+    filters.amenities,
+    filters.priceRange,
+    filters.radiusKm,
+  ]);
 
   const search = useCafeSearch(params);
   const cafes = useMemo(() => search.data?.items ?? [], [search.data]);
@@ -81,7 +95,12 @@ export default function ExploreScreen() {
     // Visible map height in km, halved, as the radius.
     const radius = Math.min(MAX_RADIUS_KM, Math.max(0.5, (mapRegion.latitudeDelta * 111) / 2));
     filters.setRadius(Math.round(radius * 10) / 10);
-    setTarget({ kind: 'near', latitude: mapRegion.latitude, longitude: mapRegion.longitude, label: 'Esta zona' });
+    setTarget({
+      kind: 'near',
+      latitude: mapRegion.latitude,
+      longitude: mapRegion.longitude,
+      label: 'Esta zona',
+    });
     setText('');
     setMapMoved(false);
   };
@@ -95,7 +114,10 @@ export default function ExploreScreen() {
   return (
     <View className="flex-1 bg-crema-50 dark:bg-night-950" style={{ paddingTop: insets.top }}>
       <View className="gap-3 px-4 pb-3 pt-2">
-        <Text accessibilityRole="header" className="text-3xl font-bold text-espresso-900 dark:text-crema-100">
+        <Text
+          accessibilityRole="header"
+          className="text-3xl font-bold text-espresso-900 dark:text-crema-100"
+        >
           Explorar
         </Text>
 
@@ -132,12 +154,15 @@ export default function ExploreScreen() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={filterCount ? `Filtros, ${filterCount} activos` : 'Filtros'}
-              className="min-h-11 flex-row items-center gap-1.5 rounded-full border border-crema-200 bg-white px-4 active:opacity-80 dark:border-night-800 dark:bg-night-900">
+              className="min-h-11 flex-row items-center gap-1.5 rounded-full border border-crema-200 bg-white px-4 active:opacity-80 dark:border-night-800 dark:bg-night-900"
+            >
               <Ionicons name="options-outline" size={18} color={palette.text} />
               <Text className="font-medium text-espresso-900 dark:text-crema-100">Filtros</Text>
               {filterCount ? (
                 <View className="min-w-5 items-center rounded-full bg-roast-500 px-1.5 dark:bg-roast-300">
-                  <Text className="text-xs font-bold text-white dark:text-espresso-900">{filterCount}</Text>
+                  <Text className="text-xs font-bold text-white dark:text-espresso-900">
+                    {filterCount}
+                  </Text>
                 </View>
               ) : null}
             </Pressable>
@@ -147,7 +172,9 @@ export default function ExploreScreen() {
         {subtitle ? (
           <Text className="text-sm text-espresso-700 dark:text-crema-200">
             {subtitle}
-            {search.data ? ` · ${search.data.total} ${search.data.total === 1 ? 'café' : 'cafés'}` : ''}
+            {search.data
+              ? ` · ${search.data.total} ${search.data.total === 1 ? 'café' : 'cafés'}`
+              : ''}
           </Text>
         ) : null}
       </View>
@@ -159,7 +186,11 @@ export default function ExploreScreen() {
           onPickCity={(city) => submitText(city)}
         />
       ) : search.isError && !search.data ? (
-        <EmptyState icon="cloud-offline-outline" title="No hemos podido cargar los cafés" message={toApiError(search.error).message}>
+        <EmptyState
+          icon="cloud-offline-outline"
+          title="No hemos podido cargar los cafés"
+          message={toApiError(search.error).message}
+        >
           <Button label="Reintentar" onPress={() => void search.refetch()} />
         </EmptyState>
       ) : search.isPending ? (
@@ -172,7 +203,12 @@ export default function ExploreScreen() {
             showsUserLocation={location.status === 'ready'}
             initialRegion={
               effectiveTarget.kind === 'near'
-                ? { latitude: effectiveTarget.latitude, longitude: effectiveTarget.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 }
+                ? {
+                    latitude: effectiveTarget.latitude,
+                    longitude: effectiveTarget.longitude,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                  }
                 : undefined
             }
             onRegionChangeComplete={(region, isGesture) => {
@@ -219,7 +255,10 @@ function ModeToggle({ mode, onChange }: { mode: ViewMode; onChange: (mode: ViewM
     { value: 'map', label: 'Mapa' },
   ];
   return (
-    <View accessibilityRole="tablist" className="flex-row rounded-full bg-crema-100 p-1 dark:bg-night-900">
+    <View
+      accessibilityRole="tablist"
+      className="flex-row rounded-full bg-crema-100 p-1 dark:bg-night-900"
+    >
       {options.map((option) => {
         const selected = option.value === mode;
         return (
@@ -228,8 +267,11 @@ function ModeToggle({ mode, onChange }: { mode: ViewMode; onChange: (mode: ViewM
             accessibilityRole="tab"
             accessibilityState={{ selected }}
             onPress={() => onChange(option.value)}
-            className={`min-h-9 justify-center rounded-full px-4 ${selected ? 'bg-white dark:bg-night-800' : ''}`}>
-            <Text className={`font-medium ${selected ? 'text-espresso-900 dark:text-crema-100' : 'text-espresso-700 dark:text-crema-200'}`}>
+            className={`min-h-9 justify-center rounded-full px-4 ${selected ? 'bg-white dark:bg-night-800' : ''}`}
+          >
+            <Text
+              className={`font-medium ${selected ? 'text-espresso-900 dark:text-crema-100' : 'text-espresso-700 dark:text-crema-200'}`}
+            >
               {option.label}
             </Text>
           </Pressable>
@@ -256,8 +298,13 @@ function IconButton({
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      className="size-11 items-center justify-center rounded-full border border-crema-200 bg-white active:opacity-80 dark:border-night-800 dark:bg-night-900">
-      <Ionicons name={active ? icon : `${icon}-outline`} size={20} color={active ? palette.accent : palette.text} />
+      className="size-11 items-center justify-center rounded-full border border-crema-200 bg-white active:opacity-80 dark:border-night-800 dark:bg-night-900"
+    >
+      <Ionicons
+        name={active ? icon : `${icon}-outline`}
+        size={20}
+        color={active ? palette.accent : palette.text}
+      />
     </Pressable>
   );
 }
@@ -295,7 +342,10 @@ function CafeList({
       renderItem={({ item }) => <CafeCard cafe={item} />}
       renderSectionHeader={({ section }) =>
         section.title ? (
-          <Text accessibilityRole="header" className="bg-crema-50 pb-1 pt-3 text-sm font-semibold uppercase tracking-wider text-espresso-500 dark:bg-night-950 dark:text-crema-200">
+          <Text
+            accessibilityRole="header"
+            className="bg-crema-50 pb-1 pt-3 text-sm font-semibold uppercase tracking-wider text-espresso-500 dark:bg-night-950 dark:text-crema-200"
+          >
             {section.title}
           </Text>
         ) : null
@@ -326,9 +376,12 @@ function NoResults({
     <EmptyState
       icon="cafe-outline"
       title="No hay cafés que encajen"
-      message="Prueba a ampliar el radio de búsqueda o a quitar algún filtro.">
+      message="Prueba a ampliar el radio de búsqueda o a quitar algún filtro."
+    >
       {canWiden ? <Button label="Ampliar radio" onPress={onWiden} /> : null}
-      {canClearFilters ? <Button label="Quitar filtros" variant="secondary" onPress={onClearFilters} /> : null}
+      {canClearFilters ? (
+        <Button label="Quitar filtros" variant="secondary" onPress={onClearFilters} />
+      ) : null}
     </EmptyState>
   );
 }
@@ -354,7 +407,8 @@ function Onboarding({
         denied
           ? 'No tenemos acceso a tu ubicación. Busca una ciudad o actívala en Ajustes.'
           : 'Usa tu ubicación para ver cafés cerca de ti, o busca una ciudad para planificar tu viaje.'
-      }>
+      }
+    >
       {!denied ? <Button label="Usar mi ubicación" onPress={onUseLocation} /> : null}
       <Text className="mt-2 text-center text-sm font-medium text-espresso-700 dark:text-crema-200">
         Ciudades populares

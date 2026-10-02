@@ -33,7 +33,10 @@ export default function SignupScreen() {
   });
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-crema-50 dark:bg-night-950">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      className="flex-1 bg-crema-50 dark:bg-night-950"
+    >
       <ScrollView contentContainerClassName="gap-5 p-5" keyboardShouldPersistTaps="handled">
         <FormError message={formError} />
         <Controller
@@ -93,16 +96,23 @@ export default function SignupScreen() {
               <Checkbox
                 checked={field.value === true}
                 onChange={field.onChange}
-                accessibilityLabel="Acepto los términos de uso y la política de privacidad">
+                accessibilityLabel="Acepto los términos de uso y la política de privacidad"
+              >
                 <Text className="text-base text-espresso-900 dark:text-crema-100">
                   Acepto los{' '}
-                  <Link href="/legal" className="font-semibold text-roast-600 underline dark:text-roast-300">
+                  <Link
+                    href="/legal"
+                    className="font-semibold text-roast-600 underline dark:text-roast-300"
+                  >
                     términos de uso y la política de privacidad
                   </Link>
                 </Text>
               </Checkbox>
               {fieldState.error ? (
-                <Text accessibilityRole="alert" className="text-sm text-cherry-600 dark:text-cherry-300">
+                <Text
+                  accessibilityRole="alert"
+                  className="text-sm text-cherry-600 dark:text-cherry-300"
+                >
                   {fieldState.error.message}
                 </Text>
               ) : null}

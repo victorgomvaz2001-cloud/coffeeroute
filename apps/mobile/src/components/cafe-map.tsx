@@ -15,7 +15,13 @@ interface CafeMapProps {
 
 const SPAIN: Region = { latitude: 40.0, longitude: -3.7, latitudeDelta: 8, longitudeDelta: 8 };
 
-export function CafeMap({ cafes, fitKey, initialRegion, showsUserLocation, onRegionChangeComplete }: CafeMapProps) {
+export function CafeMap({
+  cafes,
+  fitKey,
+  initialRegion,
+  showsUserLocation,
+  onRegionChangeComplete,
+}: CafeMapProps) {
   const ref = useRef<MapView>(null);
   const palette = usePalette();
 
@@ -36,14 +42,19 @@ export function CafeMap({ cafes, fitKey, initialRegion, showsUserLocation, onReg
       initialRegion={initialRegion ?? SPAIN}
       showsUserLocation={showsUserLocation}
       showsPointsOfInterests={false}
-      onRegionChangeComplete={(region, details) => onRegionChangeComplete?.(region, !!details?.isGesture)}
-      accessibilityLabel="Mapa de cafés">
+      onRegionChangeComplete={(region, details) =>
+        onRegionChangeComplete?.(region, !!details?.isGesture)
+      }
+      accessibilityLabel="Mapa de cafés"
+    >
       {cafes.map((cafe) => (
         <Marker
           key={cafe.id}
           coordinate={{ latitude: cafe.latitude, longitude: cafe.longitude }}
           title={cafe.name}
-          description={[cafe.neighborhood, cafe.isOpenNow ? 'Abierto' : 'Cerrado'].filter(Boolean).join(' · ')}
+          description={[cafe.neighborhood, cafe.isOpenNow ? 'Abierto' : 'Cerrado']
+            .filter(Boolean)
+            .join(' · ')}
           pinColor={palette.accent}
           onCalloutPress={() => router.push({ pathname: '/cafe/[id]', params: { id: cafe.id } })}
         />

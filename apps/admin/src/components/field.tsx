@@ -14,7 +14,10 @@ export function Field({ label, error, ...props }: Shared & InputHTMLAttributes<H
   const id = useId();
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-espresso-700 dark:text-crema-200">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-espresso-700 dark:text-crema-200"
+      >
         {label}
       </label>
       <input
@@ -33,11 +36,18 @@ export function Field({ label, error, ...props }: Shared & InputHTMLAttributes<H
   );
 }
 
-export function TextArea({ label, error, ...props }: Shared & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function TextArea({
+  label,
+  error,
+  ...props
+}: Shared & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   const id = useId();
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-espresso-700 dark:text-crema-200">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-espresso-700 dark:text-crema-200"
+      >
         {label}
       </label>
       <textarea

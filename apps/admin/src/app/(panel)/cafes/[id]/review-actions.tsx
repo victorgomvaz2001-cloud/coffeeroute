@@ -7,8 +7,14 @@ import { TextArea } from '@/components/field';
 import { Button, Notice } from '@/components/ui';
 
 export function ReviewActions({ cafeId, status }: { cafeId: string; status: CafeStatus }) {
-  const [verifyState, verify, verifying] = useActionState<FormState>(() => verifyCafeAction(cafeId), {});
-  const [rejectState, reject, rejecting] = useActionState<FormState, FormData>(rejectCafeAction.bind(null, cafeId), {});
+  const [verifyState, verify, verifying] = useActionState<FormState>(
+    () => verifyCafeAction(cafeId),
+    {},
+  );
+  const [rejectState, reject, rejecting] = useActionState<FormState, FormData>(
+    rejectCafeAction.bind(null, cafeId),
+    {},
+  );
   const [rejectOpen, setRejectOpen] = useState(false);
   const busy = verifying || rejecting;
 
@@ -47,7 +53,12 @@ export function ReviewActions({ cafeId, status }: { cafeId: string; status: Cafe
             </div>
           </form>
         ) : (
-          <Button variant="danger" onClick={() => setRejectOpen(true)} disabled={busy} className="w-full">
+          <Button
+            variant="danger"
+            onClick={() => setRejectOpen(true)}
+            disabled={busy}
+            className="w-full"
+          >
             Rechazar…
           </Button>
         ))}

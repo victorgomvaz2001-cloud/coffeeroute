@@ -3,15 +3,18 @@ import { toApiError } from '../api/errors';
 
 const axiosError = (status?: number, data?: unknown) => {
   const config = { headers: new AxiosHeaders() };
-  const response = status
-    ? { status, data, statusText: '', headers: {}, config }
-    : undefined;
+  const response = status ? { status, data, statusText: '', headers: {}, config } : undefined;
   return new AxiosError('boom', 'ERR', config, undefined, response);
 };
 
 describe('toApiError', () => {
   it('keeps the API error body', () => {
-    const body = { statusCode: 409, message: 'Ya existe', code: 'EMAIL_TAKEN', fieldErrors: { email: 'x' } };
+    const body = {
+      statusCode: 409,
+      message: 'Ya existe',
+      code: 'EMAIL_TAKEN',
+      fieldErrors: { email: 'x' },
+    };
     expect(toApiError(axiosError(409, body))).toEqual(body);
   });
 

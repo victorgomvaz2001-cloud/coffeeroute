@@ -35,7 +35,10 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
 
   return (
     <div className="space-y-6">
-      <Link href="/cafes/pending" className="text-sm font-medium text-roast-600 dark:text-roast-300">
+      <Link
+        href="/cafes/pending"
+        className="text-sm font-medium text-roast-600 dark:text-roast-300"
+      >
         ← Volver a pendientes
       </Link>
 
@@ -57,7 +60,12 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
             <h2 className="text-lg font-semibold">Ubicación</h2>
             <Detail label="Dirección">{cafe.address}</Detail>
             <Detail label="Coordenadas">
-              <a href={mapUrl} target="_blank" rel="noreferrer" className="font-mono text-roast-600 hover:underline dark:text-roast-300">
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono text-roast-600 hover:underline dark:text-roast-300"
+              >
                 {cafe.latitude.toFixed(5)}, {cafe.longitude.toFixed(5)} ↗
               </a>
             </Detail>
@@ -66,11 +74,15 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
 
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold">Café de especialidad</h2>
-            <Detail label="Tostadores">{cafe.roasters.length ? cafe.roasters.join(', ') : <Missing />}</Detail>
+            <Detail label="Tostadores">
+              {cafe.roasters.length ? cafe.roasters.join(', ') : <Missing />}
+            </Detail>
             <Detail label="Métodos">
               {cafe.brewMethods.length ? (
                 <div className="flex flex-wrap gap-1.5">
-                  {cafe.brewMethods.map((m) => <Pill key={m}>{BREW_METHOD_LABELS[m]}</Pill>)}
+                  {cafe.brewMethods.map((m) => (
+                    <Pill key={m}>{BREW_METHOD_LABELS[m]}</Pill>
+                  ))}
                 </div>
               ) : (
                 <Missing />
@@ -81,7 +93,9 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
             <Detail label="Servicios">
               {cafe.amenities.length ? (
                 <div className="flex flex-wrap gap-1.5">
-                  {cafe.amenities.map((a) => <Pill key={a}>{AMENITY_LABELS[a]}</Pill>)}
+                  {cafe.amenities.map((a) => (
+                    <Pill key={a}>{AMENITY_LABELS[a]}</Pill>
+                  ))}
                 </div>
               ) : (
                 <Missing />
@@ -98,7 +112,9 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
                   const hours = cafe.openingHours?.[day];
                   return (
                     <div key={day} className="contents">
-                      <dt className="text-espresso-700 dark:text-crema-200">{WEEKDAY_LABELS[day]}</dt>
+                      <dt className="text-espresso-700 dark:text-crema-200">
+                        {WEEKDAY_LABELS[day]}
+                      </dt>
                       <dd>{hours ? `${hours.open} – ${hours.close}` : 'Cerrado'}</dd>
                     </div>
                   );
@@ -117,14 +133,21 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
             {cafe.status === 'REJECTED' && cafe.rejectionReason ? (
               <Detail label="Motivo de rechazo">{cafe.rejectionReason}</Detail>
             ) : null}
-            {cafe.verifiedAt ? <Detail label="Verificado">{formatDate(cafe.verifiedAt)}</Detail> : null}
+            {cafe.verifiedAt ? (
+              <Detail label="Verificado">{formatDate(cafe.verifiedAt)}</Detail>
+            ) : null}
           </Card>
 
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold">Contacto y fuentes</h2>
             <Detail label="Web">
               {cafe.website ? (
-                <a href={cafe.website} target="_blank" rel="noreferrer" className="break-all text-roast-600 hover:underline dark:text-roast-300">
+                <a
+                  href={cafe.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="break-all text-roast-600 hover:underline dark:text-roast-300"
+                >
                   {cafe.website}
                 </a>
               ) : (
@@ -133,21 +156,31 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
             </Detail>
             <Detail label="Instagram">
               {instagram ? (
-                <a href={`https://instagram.com/${instagram}`} target="_blank" rel="noreferrer" className="text-roast-600 hover:underline dark:text-roast-300">
+                <a
+                  href={`https://instagram.com/${instagram}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-roast-600 hover:underline dark:text-roast-300"
+                >
                   @{instagram}
                 </a>
               ) : (
                 <Missing />
               )}
             </Detail>
-            <Detail label="Teléfono">{cafe.phone ? <a href={`tel:${cafe.phone}`}>{cafe.phone}</a> : <Missing />}</Detail>
+            <Detail label="Teléfono">
+              {cafe.phone ? <a href={`tel:${cafe.phone}`}>{cafe.phone}</a> : <Missing />}
+            </Detail>
           </Card>
 
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold">Propuesta</h2>
             <Detail label="Por">
               {cafe.proposedBy ? (
-                <a href={`mailto:${cafe.proposedBy.email}`} className="text-roast-600 hover:underline dark:text-roast-300">
+                <a
+                  href={`mailto:${cafe.proposedBy.email}`}
+                  className="text-roast-600 hover:underline dark:text-roast-300"
+                >
                   {cafe.proposedBy.name ?? cafe.proposedBy.email}
                 </a>
               ) : (
@@ -165,7 +198,9 @@ export default async function CafeReviewPage({ params }: PageProps<'/cafes/[id]'
 function Detail({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="space-y-1">
-      <div className="text-xs font-semibold uppercase tracking-wider text-espresso-500 dark:text-crema-200">{label}</div>
+      <div className="text-xs font-semibold uppercase tracking-wider text-espresso-500 dark:text-crema-200">
+        {label}
+      </div>
       <div>{children}</div>
     </div>
   );

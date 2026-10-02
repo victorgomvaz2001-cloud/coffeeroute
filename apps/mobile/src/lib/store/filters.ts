@@ -23,7 +23,10 @@ const DEFAULT_FILTERS: Filters = {
 };
 
 interface FiltersState extends Filters {
-  toggle: <K extends 'brewMethods' | 'amenities' | 'priceRange'>(key: K, value: Filters[K][number]) => void;
+  toggle: <K extends 'brewMethods' | 'amenities' | 'priceRange'>(
+    key: K,
+    value: Filters[K][number],
+  ) => void;
   setOpenNow: (value: boolean) => void;
   setRadius: (km: number) => void;
   reset: () => void;
@@ -34,7 +37,9 @@ export const useFilters = create<FiltersState>((set) => ({
   toggle: (key, value) =>
     set((state) => {
       const current = state[key] as string[];
-      const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+      const next = current.includes(value)
+        ? current.filter((v) => v !== value)
+        : [...current, value];
       return { [key]: next } as Partial<Filters>;
     }),
   setOpenNow: (openNow) => set({ openNow }),

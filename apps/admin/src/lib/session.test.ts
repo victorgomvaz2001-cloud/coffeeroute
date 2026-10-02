@@ -7,7 +7,11 @@ const jwt = (payload: object) =>
 describe('readAccessClaims', () => {
   it('reads sub, role and exp from the payload', () => {
     const exp = Math.floor(Date.now() / 1000) + 600;
-    expect(readAccessClaims(jwt({ sub: 'u1', role: 'ADMIN', exp }))).toEqual({ sub: 'u1', role: 'ADMIN', exp });
+    expect(readAccessClaims(jwt({ sub: 'u1', role: 'ADMIN', exp }))).toEqual({
+      sub: 'u1',
+      role: 'ADMIN',
+      exp,
+    });
   });
 
   it('rejects missing, malformed or incomplete tokens', () => {

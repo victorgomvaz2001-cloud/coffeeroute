@@ -9,9 +9,16 @@ export const api = axios.create({ baseURL: API_URL, timeout: 15_000 });
 // Arrays travel as `brewMethods=a,b`, which the API's schemas accept.
 api.defaults.paramsSerializer = (params: Record<string, unknown>) =>
   Object.entries(params)
-    .filter(([, value]) => value !== undefined && value !== null && value !== '' && !(Array.isArray(value) && value.length === 0))
-    .map(([key, value]) =>
-      `${encodeURIComponent(key)}=${encodeURIComponent(Array.isArray(value) ? value.join(',') : String(value))}`,
+    .filter(
+      ([, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== '' &&
+        !(Array.isArray(value) && value.length === 0),
+    )
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(Array.isArray(value) ? value.join(',') : String(value))}`,
     )
     .join('&');
 

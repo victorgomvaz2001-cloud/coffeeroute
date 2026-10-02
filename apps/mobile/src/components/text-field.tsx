@@ -21,7 +21,9 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
         accessibilityLabel={label}
         placeholderTextColor={palette.muted}
         className={`min-h-12 rounded-xl border bg-white px-4 text-base text-espresso-900 dark:bg-night-900 dark:text-crema-100 ${
-          error ? 'border-cherry-600 dark:border-cherry-300' : 'border-crema-200 dark:border-night-800'
+          error
+            ? 'border-cherry-600 dark:border-cherry-300'
+            : 'border-crema-200 dark:border-night-800'
         }`}
         {...props}
       />
