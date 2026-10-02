@@ -12,19 +12,29 @@ export const meQueryKey = ['me'] as const;
 
 export function useLogin() {
   const setSession = useSession((s) => s.setSession);
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: LoginInput) =>
       (await api.post<AuthResponse>('/auth/login', input)).data,
-    onSuccess: setSession,
+    onSuccess: (data) => {
+      setSession(data);
+      queryClient.invalidateQueries({ queryKey: ['cafes', 'detail'] });
+      queryClient.removeQueries({ queryKey: ['checkins'] });
+    },
   });
 }
 
 export function useSignup() {
   const setSession = useSession((s) => s.setSession);
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: SignupInput) =>
       (await api.post<AuthResponse>('/auth/signup', input)).data,
-    onSuccess: setSession,
+    onSuccess: (data) => {
+      setSession(data);
+      queryClient.invalidateQueries({ queryKey: ['cafes', 'detail'] });
+      queryClient.removeQueries({ queryKey: ['checkins'] });
+    },
   });
 }
 
@@ -38,7 +48,7 @@ export function useLogout() {
     },
     onSettled: async () => {
       await useSession.getState().clear();
-      queryClient.removeQueries({ queryKey: meQueryKey });
+      queryClient.clear();
     },
   });
 }

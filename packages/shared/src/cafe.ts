@@ -104,6 +104,13 @@ export interface CafeSummary {
   distanceKm: number | null;
 }
 
+/** Per-dimension averages over each user's latest check-in, one decimal. */
+export interface CafeRatings {
+  coffee: number;
+  service: number;
+  ambiance: number;
+}
+
 export interface CafeDetail extends CafeSummary {
   website: string | null;
   instagram: string | null;
@@ -115,6 +122,10 @@ export interface CafeDetail extends CafeSummary {
   status: CafeStatus;
   rejectionReason: string | null;
   createdAt: string;
+  /** Null until someone rates the café. */
+  ratings: CafeRatings | null;
+  /** The viewer's check-in for the café's current local day; null when anonymous or none. */
+  myCheckInToday: { id: string } | null;
 }
 
 export interface Paginated<T> {
@@ -132,8 +143,8 @@ export const paginationQuerySchema = z.object({
 });
 export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
 
-/** Café as seen by curators in the admin panel. */
-export interface AdminCafe extends CafeDetail {
+/** Café as seen by curators in the admin panel. No viewer, so no ratings or check-in state. */
+export interface AdminCafe extends Omit<CafeDetail, 'ratings' | 'myCheckInToday'> {
   proposedBy: { id: string; name: string | null; email: string } | null;
   verifiedAt: string | null;
 }

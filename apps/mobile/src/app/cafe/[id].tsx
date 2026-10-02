@@ -7,19 +7,23 @@ import {
   WEEKDAYS,
   type CafeDetail,
 } from '@coffeeroute/shared';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { type ComponentProps } from 'react';
 import { ActionSheetIOS, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { OpenBadge, RatingBadge } from '@/components/badges';
 import { Button } from '@/components/button';
+import { CheckInCard } from '@/components/check-in-card';
 import { Chip } from '@/components/chip';
+import { RatingSummary } from '@/components/rating-summary';
 import { RouteToggleButton } from '@/components/route-toggle';
 import { Section } from '@/components/section';
 import { EmptyState, LoadingState } from '@/components/states';
 import { usePalette } from '@/hooks/use-palette';
 import { useCafe } from '@/lib/api/cafes';
+import { useCafeCheckIns } from '@/lib/api/checkins';
 import { toApiError } from '@/lib/api/errors';
 import { openDirections } from '@/lib/maps';
+import { useSession } from '@/lib/store/session';
 
 export default function CafeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -103,8 +107,18 @@ function CafeDetailView({ cafe }: { cafe: CafeDetail }) {
             </Text>
           </View>
           <Button label="Cómo llegar" onPress={chooseMapsApp} />
+          <CheckInAction cafe={cafe} />
           {cafe.status === 'VERIFIED' ? <RouteToggleButton cafe={cafe} /> : null}
         </View>
+
+        {cafe.status === 'VERIFIED' ? (
+          <>
+            <Section title="Valoraciones">
+              <RatingSummary cafe={cafe} />
+            </Section>
+            <RecentVisits cafeId={cafe.id} />
+          </>
+        ) : null}
 
         {cafe.brewMethods.length ? (
           <Section title="Métodos de preparación">
@@ -229,6 +243,61 @@ function OpeningHoursTable({ cafe }: { cafe: CafeDetail }) {
           );
         })}
       </View>
+    </Section>
+  );
+}
+
+const RECENT_VISITS = 3;
+
+function CheckInAction({ cafe }: { cafe: CafeDetail }) {
+  const authenticated = useSession((s) => s.status === 'authenticated');
+  if (cafe.status !== 'VERIFIED') return null;
+  if (!authenticated) {
+    return (
+      <Button label="Hacer check-in" variant="secondary" onPress={() => router.push('/login')} />
+    );
+  }
+  const today = cafe.myCheckInToday;
+  if (today) {
+    return (
+      <Button
+        label="Check-in de hoy ✓ · Editar"
+        variant="secondary"
+        onPress={() => router.push({ pathname: '/checkin', params: { checkInId: today.id } })}
+      />
+    );
+  }
+  return (
+    <Button
+      label="Hacer check-in"
+      variant="secondary"
+      onPress={() => router.push({ pathname: '/checkin', params: { cafeId: cafe.id } })}
+    />
+  );
+}
+
+function RecentVisits({ cafeId }: { cafeId: string }) {
+  const visits = useCafeCheckIns(cafeId, RECENT_VISITS);
+  if (!visits.data?.total) return null;
+  const { items, total } = visits.data;
+  return (
+    <Section title="Visitas recientes">
+      <View className="gap-3">
+        {items.map((checkIn) => (
+          <CheckInCard
+            key={checkIn.id}
+            checkIn={checkIn}
+            title={checkIn.author.name ?? 'Cafetero anónimo'}
+          />
+        ))}
+      </View>
+      {total > items.length ? (
+        <Button
+          label={`Ver las ${total} visitas`}
+          variant="ghost"
+          onPress={() => router.push({ pathname: '/checkins/cafe/[id]', params: { id: cafeId } })}
+        />
+      ) : null}
     </Section>
   );
 }

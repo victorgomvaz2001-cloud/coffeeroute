@@ -24,8 +24,6 @@ export interface SeedCafe {
   priceRange: PriceRange;
   equipment: { machine: string; grinder: string };
   openingHours: OpeningHours;
-  averageRating: number;
-  totalReviews: number;
   status?: 'PENDING' | 'VERIFIED';
 }
 
@@ -84,8 +82,6 @@ const malaga: Base[] = [
     amenities: ['wifi', 'laptop-friendly'],
     priceRange: '€€',
     openingHours: HOURS.office,
-    averageRating: 4.7,
-    totalReviews: 132,
   },
   {
     name: 'Origen Mediterráneo',
@@ -98,8 +94,6 @@ const malaga: Base[] = [
     amenities: ['wifi', 'outdoor-seating'],
     priceRange: '€€',
     openingHours: HOURS.allWeek,
-    averageRating: 4.5,
-    totalReviews: 88,
   },
   {
     name: 'La Taza Lenta',
@@ -112,8 +106,6 @@ const malaga: Base[] = [
     amenities: ['wifi', 'laptop-friendly', 'power-outlets', 'vegan-options'],
     priceRange: '€',
     openingHours: HOURS.office,
-    averageRating: 4.3,
-    totalReviews: 54,
   },
   {
     name: 'Grano Soho',
@@ -126,8 +118,6 @@ const malaga: Base[] = [
     amenities: ['pet-friendly', 'outdoor-seating'],
     priceRange: '€€€',
     openingHours: HOURS.late,
-    averageRating: 4.8,
-    totalReviews: 201,
   },
   {
     name: 'Muelle Uno Coffee Lab',
@@ -140,8 +130,6 @@ const malaga: Base[] = [
     amenities: ['outdoor-seating', 'accessible'],
     priceRange: '€€',
     openingHours: HOURS.allWeek,
-    averageRating: 4.1,
-    totalReviews: 76,
   },
   {
     name: 'Pedregalejo Roast',
@@ -154,8 +142,6 @@ const malaga: Base[] = [
     amenities: ['outdoor-seating', 'pet-friendly'],
     priceRange: '€',
     openingHours: HOURS.brunch,
-    averageRating: 4.4,
-    totalReviews: 41,
   },
   {
     name: 'Teatinos Filter Bar',
@@ -168,8 +154,6 @@ const malaga: Base[] = [
     amenities: ['wifi', 'laptop-friendly', 'power-outlets', 'accessible'],
     priceRange: '€',
     openingHours: HOURS.office,
-    averageRating: 4.2,
-    totalReviews: 29,
   },
   {
     name: 'Lagunillas Espresso',
@@ -182,8 +166,6 @@ const malaga: Base[] = [
     amenities: ['vegan-options'],
     priceRange: '€',
     openingHours: HOURS.office,
-    averageRating: 0,
-    totalReviews: 0,
     status: 'PENDING',
   },
   {
@@ -197,8 +179,6 @@ const malaga: Base[] = [
     amenities: ['wifi'],
     priceRange: '€€',
     openingHours: HOURS.allWeek,
-    averageRating: 0,
-    totalReviews: 0,
     status: 'PENDING',
   },
 ];
@@ -215,8 +195,6 @@ const madrid: Base[] = [
     amenities: ['wifi', 'laptop-friendly', 'power-outlets'],
     priceRange: '€€',
     openingHours: HOURS.allWeek,
-    averageRating: 4.6,
-    totalReviews: 310,
   },
   {
     name: 'Tueste Castizo',
@@ -229,8 +207,6 @@ const madrid: Base[] = [
     amenities: ['wifi', 'vegan-options'],
     priceRange: '€',
     openingHours: HOURS.office,
-    averageRating: 4.2,
-    totalReviews: 97,
   },
   {
     name: 'Cafetal Lavapiés',
@@ -243,8 +219,6 @@ const madrid: Base[] = [
     amenities: ['pet-friendly', 'vegan-options'],
     priceRange: '€',
     openingHours: HOURS.late,
-    averageRating: 4.4,
-    totalReviews: 143,
   },
   {
     name: 'Sifón Chamberí',
@@ -257,8 +231,6 @@ const madrid: Base[] = [
     amenities: ['wifi', 'accessible'],
     priceRange: '€€€',
     openingHours: HOURS.office,
-    averageRating: 4.9,
-    totalReviews: 64,
   },
   {
     name: 'Ruta Latina Coffee',
@@ -271,8 +243,6 @@ const madrid: Base[] = [
     amenities: ['outdoor-seating'],
     priceRange: '€€',
     openingHours: HOURS.brunch,
-    averageRating: 4.0,
-    totalReviews: 58,
   },
   {
     name: 'Estudio Grano',
@@ -285,8 +255,6 @@ const madrid: Base[] = [
     amenities: ['wifi', 'laptop-friendly', 'power-outlets'],
     priceRange: '€€',
     openingHours: HOURS.office,
-    averageRating: 4.5,
-    totalReviews: 180,
   },
   {
     name: 'Retiro Pour Over',
@@ -299,8 +267,6 @@ const madrid: Base[] = [
     amenities: ['pet-friendly', 'outdoor-seating'],
     priceRange: '€€',
     openingHours: HOURS.allWeek,
-    averageRating: 4.3,
-    totalReviews: 72,
   },
   {
     name: 'Huertas Brew Bar',
@@ -313,8 +279,6 @@ const madrid: Base[] = [
     amenities: ['wifi'],
     priceRange: '€€',
     openingHours: HOURS.late,
-    averageRating: 4.6,
-    totalReviews: 121,
   },
   {
     name: 'Conde Duque Tostadores',
@@ -327,8 +291,6 @@ const madrid: Base[] = [
     amenities: ['laptop-friendly'],
     priceRange: '€',
     openingHours: HOURS.office,
-    averageRating: 0,
-    totalReviews: 0,
     status: 'PENDING',
   },
 ];
@@ -345,8 +307,6 @@ const lisboa: Base[] = [
     amenities: ['wifi', 'laptop-friendly'],
     priceRange: '€€',
     openingHours: HOURS.allWeek,
-    averageRating: 4.7,
-    totalReviews: 205,
   },
   {
     name: 'Miradouro Coffee',
@@ -359,8 +319,6 @@ const lisboa: Base[] = [
     amenities: ['outdoor-seating', 'pet-friendly'],
     priceRange: '€€€',
     openingHours: HOURS.brunch,
-    averageRating: 4.5,
-    totalReviews: 99,
   },
   {
     name: 'Grão de Alfama',
@@ -373,8 +331,6 @@ const lisboa: Base[] = [
     amenities: ['vegan-options'],
     priceRange: '€',
     openingHours: HOURS.office,
-    averageRating: 4.1,
-    totalReviews: 47,
   },
   {
     name: 'Cais Filter Club',
@@ -387,8 +343,6 @@ const lisboa: Base[] = [
     amenities: ['wifi', 'laptop-friendly', 'power-outlets'],
     priceRange: '€€',
     openingHours: HOURS.late,
-    averageRating: 4.6,
-    totalReviews: 160,
   },
   {
     name: 'Estrela Espresso',
@@ -401,8 +355,6 @@ const lisboa: Base[] = [
     amenities: ['wifi', 'accessible'],
     priceRange: '€',
     openingHours: HOURS.office,
-    averageRating: 4.2,
-    totalReviews: 38,
   },
   {
     name: 'Baixa Brew',
@@ -415,8 +367,6 @@ const lisboa: Base[] = [
     amenities: ['outdoor-seating'],
     priceRange: '€€',
     openingHours: HOURS.allWeek,
-    averageRating: 4.0,
-    totalReviews: 85,
   },
   {
     name: 'Intendente Roastery',
@@ -429,8 +379,6 @@ const lisboa: Base[] = [
     amenities: ['wifi', 'pet-friendly'],
     priceRange: '€',
     openingHours: HOURS.brunch,
-    averageRating: 0,
-    totalReviews: 0,
     status: 'PENDING',
   },
 ];
@@ -449,4 +397,23 @@ export const SEED_CAFES: SeedCafe[] = [
   ...malaga.map(withCity('Málaga', 'España', 'Europe/Madrid')),
   ...madrid.map(withCity('Madrid', 'España', 'Europe/Madrid')),
   ...lisboa.map(withCity('Lisboa', 'Portugal', 'Europe/Lisbon')),
+];
+
+/** Fictional regulars whose check-ins give the seeded cafés real averages. They cannot log in. */
+export const SEED_TASTERS = [
+  { email: 'lucia.ferrer@seed.coffeeroute.app', name: 'Lucía Ferrer' },
+  { email: 'tomas.iglesias@seed.coffeeroute.app', name: 'Tomás Iglesias' },
+  { email: 'ines.duarte@seed.coffeeroute.app', name: 'Inês Duarte' },
+  { email: 'marta.solis@seed.coffeeroute.app', name: 'Marta Solís' },
+  { email: 'rui.almeida@seed.coffeeroute.app', name: 'Rui Almeida' },
+  { email: 'pablo.herrera@seed.coffeeroute.app', name: 'Pablo Herrera' },
+];
+
+export const SEED_TASTING_NOTES: (string | null)[] = [
+  'Chocolate con leche, acidez media y cuerpo sedoso.',
+  'Fresa madura y final largo; el filtro brilla.',
+  'Espresso equilibrado, algo amargo al enfriarse.',
+  'Panela y avellana, muy dulce con leche.',
+  'Floral y ligero, ideal en pour-over.',
+  null,
 ];

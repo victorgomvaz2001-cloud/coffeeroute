@@ -8,6 +8,8 @@ import {
 } from '@coffeeroute/shared';
 import { randomBytes } from 'node:crypto';
 import { type z } from 'zod';
+import { readCafeRatings } from '../checkins/cafe-ratings';
+import { localVisitDate } from '../checkins/visit-date';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthUser } from '../types/auth-user';
@@ -41,7 +43,22 @@ export class CafesService {
         code: 'NOT_FOUND',
       });
     }
-    return toCafeDetail(cafe);
+    const [ratings, myCheckInToday] = await Promise.all([
+      readCafeRatings(this.prisma, cafe.id),
+      viewer
+        ? this.prisma.checkIn.findUnique({
+            where: {
+              userId_cafeId_visitedOn: {
+                userId: viewer.id,
+                cafeId: cafe.id,
+                visitedOn: localVisitDate(cafe.timezone),
+              },
+            },
+            select: { id: true },
+          })
+        : null,
+    ]);
+    return toCafeDetail(cafe, { ratings, myCheckInToday });
   }
 
   /** Users propose cafés; they stay PENDING until a curator verifies them (UC6). */

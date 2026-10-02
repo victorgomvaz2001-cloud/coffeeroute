@@ -6,6 +6,8 @@ import {
   type UserStats,
 } from '@coffeeroute/shared';
 import { PrismaService } from '../prisma/prisma.service';
+import { CafeSearchCache } from '../cafes/cafe-search-cache.service';
+import { recomputeCafeRatings } from '../checkins/cafe-ratings';
 import { toPublicUserProfile, toUserProfile } from './user.mapper';
 
 const notFound = () =>
@@ -13,7 +15,10 @@ const notFound = () =>
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly searchCache: CafeSearchCache,
+  ) {}
 
   async getMe(userId: string): Promise<MeResponse> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -28,7 +33,23 @@ export class UsersService {
 
   /** GDPR right to erasure (RNF20/RNF21): personal data cascades, proposed cafés are kept anonymised. */
   async deleteMe(userId: string): Promise<void> {
-    await this.prisma.user.delete({ where: { id: userId } });
+    const touchedCafes = await this.prisma.$transaction(async (tx) => {
+      // Lock the user row so a concurrent check-in insert (FK KEY SHARE) waits
+      // until this deletion commits, instead of racing past the scan below.
+      await tx.$queryRaw`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`;
+      // Sorted so recomputes lock cafés in a consistent order.
+      const visited = await tx.checkIn.findMany({
+        where: { userId },
+        distinct: ['cafeId'],
+        select: { cafeId: true },
+        orderBy: { cafeId: 'asc' },
+      });
+      await tx.user.delete({ where: { id: userId } });
+      // Their check-ins cascaded away; drop their votes from those cafés' averages.
+      for (const { cafeId } of visited) await recomputeCafeRatings(tx, cafeId);
+      return visited.length;
+    });
+    if (touchedCafes) await this.searchCache.invalidate();
   }
 
   async getPublicProfile(userId: string): Promise<PublicUserResponse> {

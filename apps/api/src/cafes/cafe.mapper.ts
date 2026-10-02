@@ -57,7 +57,11 @@ export function toCafeSummary(row: SummarySource, now = new Date()): CafeSummary
   };
 }
 
-export function toCafeDetail(cafe: Cafe): CafeDetail {
+type DetailExtras = Pick<CafeDetail, 'ratings' | 'myCheckInToday'>;
+
+const NO_EXTRAS: DetailExtras = { ratings: null, myCheckInToday: null };
+
+export function toCafeDetail(cafe: Cafe, extras: DetailExtras = NO_EXTRAS): CafeDetail {
   return {
     ...toCafeSummary(cafe),
     website: cafe.website,
@@ -70,14 +74,18 @@ export function toCafeDetail(cafe: Cafe): CafeDetail {
     status: cafe.status,
     rejectionReason: cafe.rejectionReason,
     createdAt: cafe.createdAt.toISOString(),
+    ...extras,
   };
 }
 
 export function toAdminCafe(
   cafe: Cafe & { proposedBy: Pick<User, 'id' | 'name' | 'email'> | null },
 ): AdminCafe {
+  // toCafeDetail defaults ratings/myCheckInToday to null when no extras are given; AdminCafe
+  // doesn't carry them at all, so drop them instead of exposing the always-null placeholders.
+  const { ratings: _ratings, myCheckInToday: _myCheckInToday, ...detail } = toCafeDetail(cafe);
   return {
-    ...toCafeDetail(cafe),
+    ...detail,
     proposedBy: cafe.proposedBy,
     verifiedAt: cafe.verifiedAt?.toISOString() ?? null,
   };

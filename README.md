@@ -78,6 +78,8 @@ Versionada bajo `/api/v1` (RNF35). Swagger en <http://localhost:3000/api/docs>. 
 | `GET /cafes?lat&lng&radiusKm&city&q&brewMethods&amenities&priceRange&roaster&openNow&page&limit`                        | Público                                                                    |
 | `GET /cafes/:id`                                                                                                        | Público (los no verificados solo los ven su proponente y los curadores)    |
 | `POST /cafes`                                                                                                           | Usuario: propone un café (queda `PENDING`)                                 |
+| `GET /cafes/:id/checkins?page&limit` · `GET /users/:id/checkins?page&limit`                                             | Público: visitas de cafés verificados, sin precio pagado                   |
+| `POST /checkins` · `GET /checkins/me` · `GET/PATCH/DELETE /checkins/:id`                                                | Usuario: un check-in por café y día; solo el autor lo ve completo y edita  |
 | `POST /routes/plan`                                                                                                     | Usuario: tramos, totales y orden óptimo (opcionalmente desde tu ubicación) |
 | `GET /routes/mine` · `POST /routes` · `PATCH/DELETE /routes/:id`                                                        | Usuario (solo el autor modifica)                                           |
 | `GET /routes?city` · `GET /routes/:id`                                                                                  | Público para rutas públicas; las privadas solo las ve su autor             |
@@ -91,12 +93,13 @@ Hecho en esta fase:
 
 - **UC1 / UC3:** búsqueda por ubicación o ciudad, filtros, mapa y lista. **UC6:** propuesta y verificación de cafés. Auth email/contraseña y perfil con estadísticas.
 - **UC2 / RF3-6 / RF16:** rutas de 2-10 cafés con orden óptimo exacto, tiempos a pie de Mapbox (con respaldo), notas, edición, borrado y exportación a Google/Apple Maps ([ADR 0011](docs/adr/0011-route-planning.md)).
+- **UC4 / RF7-8:** check-in con valoración de café, servicio y ambiente, métodos probados, nota de tasting y precio; medias reales en búsqueda y ficha, visitas recientes y «Mis visitas» en el perfil ([ADR 0012](docs/adr/0012-checkins-ratings.md)). Fotos pendientes de la subida de imágenes.
 - Modelo de datos completo del MVP (rutas, check-ins, follows, favoritos y reportes ya existen en la BD).
 - CI en GitHub Actions: formato, lint, typecheck, tests (incluidos e2e con PostGIS) y build.
 
 Pendiente:
 
-- «Iniciar ruta» guiada (UC7), división en varios días (UC3), check-ins y valoraciones (UC4), modo offline (UC8).
+- «Iniciar ruta» guiada (UC7), división en varios días (UC3), fotos en check-ins, gamificación y modo offline (UC8).
 - Google y Apple Sign-In (RF20). Notificar al proponente cuando se verifica o rechaza su café.
 - Sentry en el móvil, subida de imágenes, despliegue (Railway) y migración a Mapbox ([ADR 0007](docs/adr/0007-react-native-maps-interim.md)).
 

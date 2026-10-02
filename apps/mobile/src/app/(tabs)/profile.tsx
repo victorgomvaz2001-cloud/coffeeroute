@@ -2,10 +2,12 @@ import { router } from 'expo-router';
 import { Alert, Linking, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/button';
+import { CheckInCard } from '@/components/check-in-card';
 import { Section } from '@/components/section';
 import { EmptyState } from '@/components/states';
 import { useDeleteAccount, useLogout, useMe } from '@/lib/api/auth';
 import { toApiError } from '@/lib/api/errors';
+import { useMyCheckIns } from '@/lib/api/checkins';
 import { useSession } from '@/lib/store/session';
 
 export default function ProfileScreen() {
@@ -77,6 +79,8 @@ function SignedInProfile() {
         <Stat label="Check-ins" value={stats?.checkIns} />
       </View>
 
+      <RecentCheckIns />
+
       <Section title="Contribuye">
         <Text className="text-base text-espresso-700 dark:text-crema-200">
           ¿Conoces un café de especialidad que no está en CoffeeRoute? Propónlo y lo revisaremos.
@@ -131,5 +135,42 @@ function Stat({ label, value }: { label: string; value: number | undefined }) {
       </Text>
       <Text className="text-sm text-espresso-700 dark:text-crema-200">{label}</Text>
     </View>
+  );
+}
+
+const PROFILE_VISITS = 5;
+
+function RecentCheckIns() {
+  const visits = useMyCheckIns(PROFILE_VISITS);
+  const items = visits.data?.items ?? [];
+  return (
+    <Section title="Mis visitas">
+      {visits.isError ? (
+        <Text className="text-base text-espresso-700 dark:text-crema-200">
+          {toApiError(visits.error).message}
+        </Text>
+      ) : visits.isPending ? null : items.length === 0 ? (
+        <Text className="text-base text-espresso-700 dark:text-crema-200">
+          Aún no has hecho check-in. Abre la ficha de un café y pulsa «Hacer check-in».
+        </Text>
+      ) : (
+        <View className="gap-3">
+          {items.map((checkIn) => (
+            <CheckInCard
+              key={checkIn.id}
+              checkIn={checkIn}
+              title={checkIn.cafe.name}
+              subtitle={checkIn.cafe.city}
+              onPress={() =>
+                router.push({ pathname: '/checkin', params: { checkInId: checkIn.id } })
+              }
+            />
+          ))}
+        </View>
+      )}
+      {visits.data && visits.data.total > items.length ? (
+        <Button label="Ver todas" variant="ghost" onPress={() => router.push('/checkins/mine')} />
+      ) : null}
+    </Section>
   );
 }
