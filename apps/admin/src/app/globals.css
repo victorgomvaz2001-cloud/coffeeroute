@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+/* Same palette as the mobile app (apps/mobile/src/global.css). */
+@theme {
+  --color-crema-50: #fbf8f4;
+  --color-crema-100: #f4ece2;
+  --color-crema-200: #e8dccd;
+  --color-espresso-500: #8a6e5c;
+  --color-espresso-700: #5a4234;
+  --color-espresso-900: #2b1a12;
+  --color-roast-300: #e3a17c;
+  --color-roast-500: #a4522b;
+  --color-roast-600: #8c4423;
+  --color-leaf-300: #7fcf9e;
+  --color-leaf-600: #2f7d4f;
+  --color-cherry-300: #f2a29c;
+  --color-cherry-600: #b3261e;
+  --color-night-950: #15100d;
+  --color-night-900: #221a15;
+  --color-night-800: #3a2c23;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+body {
+  @apply bg-crema-50 text-espresso-900 antialiased dark:bg-night-950 dark:text-crema-100;
+}
+
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-roast-500 dark:outline-roast-300;
+}
