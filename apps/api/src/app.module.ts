@@ -12,6 +12,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { CafesModule } from './cafes/cafes.module';
+import { CheckinsModule } from './checkins/checkins.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
@@ -64,6 +65,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     CafesModule,
     RoutesModule,
+    CheckinsModule,
     AdminModule,
   ],
   providers: [
