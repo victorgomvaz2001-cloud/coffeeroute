@@ -2,54 +2,38 @@
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
   "agentGuidance": false,
+  "globalPassThroughEnv": [
+    "DATABASE_URL",
+    "REDIS_URL",
+    "E2E_DATABASE_URL",
+    "E2E_REDIS_URL",
+    "JWT_ACCESS_SECRET",
+    "API_URL",
+    "CI"
+  ],
   "tasks": {
     "db:generate": {
-      "inputs": [
-        "prisma/schema.prisma"
-      ],
-      "outputs": [
-        "src/generated/**"
-      ]
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["src/generated/**"]
     },
     "build": {
-      "dependsOn": [
-        "^build",
-        "db:generate"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**",
-        "!.next/cache/**"
-      ]
+      "dependsOn": ["^build", "db:generate"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
-      "dependsOn": [
-        "^build",
-        "db:generate"
-      ],
+      "dependsOn": ["^build", "db:generate"],
       "cache": false,
       "persistent": true
     },
     "lint": {
-      "dependsOn": [
-        "^build",
-        "db:generate"
-      ]
+      "dependsOn": ["^build", "db:generate"]
     },
     "typecheck": {
-      "dependsOn": [
-        "^build",
-        "db:generate"
-      ]
+      "dependsOn": ["^build", "db:generate"]
     },
     "test": {
-      "dependsOn": [
-        "^build",
-        "db:generate"
-      ],
-      "outputs": [
-        "coverage/**"
-      ]
+      "dependsOn": ["^build", "db:generate"],
+      "outputs": ["coverage/**"]
     }
   }
 }
