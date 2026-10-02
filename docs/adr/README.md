@@ -15,3 +15,4 @@ Decisiones técnicas de CoffeeRoute. Formato: contexto → decisión → consecu
 | [0009](0009-postgis-generated-column.md)  | Columna `location` generada por PostGIS                     | Aceptada                     |
 | [0010](0010-dependency-versions.md)       | Versiones fijadas a octubre de 2026                         | Aceptada                     |
 | [0011](0011-route-planning.md)            | Rutas: Held-Karp + Mapbox Matrix con caché y respaldo       | Aceptada                     |
+| [0012](0012-checkins-ratings.md)          | Check-ins: un voto por usuario y recálculo transaccional    | Aceptada                     |
