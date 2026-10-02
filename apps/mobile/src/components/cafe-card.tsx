@@ -2,6 +2,7 @@ import { BREW_METHOD_LABELS, type CafeSummary } from '@coffeeroute/shared';
 import { Link } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { formatDistance, OpenBadge, RatingBadge } from './badges';
+import { RouteToggleIcon } from './route-toggle';
 
 export function CafeCard({ cafe }: { cafe: CafeSummary }) {
   const distance = formatDistance(cafe.distanceKm);
@@ -28,6 +29,7 @@ export function CafeCard({ cafe }: { cafe: CafeSummary }) {
           <Text className="text-base font-semibold text-espresso-700 dark:text-crema-200">
             {cafe.priceRange}
           </Text>
+          <RouteToggleIcon cafe={cafe} />
         </View>
 
         <View className="flex-row flex-wrap items-center gap-x-4 gap-y-1">

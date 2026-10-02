@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/button';
 import { CafeCard } from '@/components/cafe-card';
 import { CafeMap } from '@/components/cafe-map';
+import { RouteDraftBar } from '@/components/route-draft-bar';
 import { EmptyState, LoadingState } from '@/components/states';
 import { usePalette } from '@/hooks/use-palette';
 import { useUserLocation } from '@/hooks/use-user-location';
@@ -245,6 +246,7 @@ export default function ExploreScreen() {
           }
         />
       )}
+      <RouteDraftBar />
     </View>
   );
 }
@@ -351,7 +353,7 @@ function CafeList({
         ) : null
       }
       ItemSeparatorComponent={() => <View className="h-3" />}
-      contentContainerClassName="px-4 pb-8 grow"
+      contentContainerClassName="px-4 pb-28 grow"
       ListEmptyComponent={empty}
       refreshing={refreshing}
       onRefresh={onRefresh}
