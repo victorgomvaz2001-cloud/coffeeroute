@@ -318,4 +318,30 @@ describe('Check-ins (e2e)', () => {
 
     await ctx.http().get('/api/v1/users/6f1c2a3b-4d5e-4f60-8a7b-9c0d1e2f3a4b/checkins').expect(404);
   });
+
+  it('drops the votes of a deleted account from café ratings', async () => {
+    const [leaving, staying] = await Promise.all([signup(ctx), signup(ctx)]);
+    const cafe = await createCafe(ctx);
+    await post(leaving.bearer, {
+      cafeId: cafe.id,
+      ratingCoffee: 1,
+      ratingService: 1,
+      ratingAmbiance: 1,
+    }).expect(201);
+    await post(staying.bearer, {
+      cafeId: cafe.id,
+      ratingCoffee: 5,
+      ratingService: 5,
+      ratingAmbiance: 5,
+    }).expect(201);
+    expect((await cafeDetail(cafe.id)).averageRating).toBe(3);
+
+    await ctx.http().delete('/api/v1/users/me').set('Authorization', leaving.bearer).expect(204);
+
+    expect(await cafeDetail(cafe.id)).toMatchObject({
+      averageRating: 5,
+      totalReviews: 1,
+      totalCheckIns: 1,
+    });
+  });
 });
