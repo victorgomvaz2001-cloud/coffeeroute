@@ -85,6 +85,9 @@ export default function RootLayout() {
             name="propose"
             options={{ presentation: 'modal', title: 'Proponer un café' }}
           />
+          <Stack.Screen name="checkin" options={{ presentation: 'modal', title: 'Check-in' }} />
+          <Stack.Screen name="checkins/cafe/[id]" options={{ title: 'Visitas' }} />
+          <Stack.Screen name="checkins/mine" options={{ title: 'Mis visitas' }} />
           <Stack.Screen name="legal" options={{ title: 'Privacidad y términos' }} />
           <Stack.Screen name="route-editor" options={{ presentation: 'modal' }} />
           <Stack.Screen name="routes/[id]" options={{ title: '' }} />
