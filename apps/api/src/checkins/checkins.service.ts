@@ -4,6 +4,8 @@ import {
   createCheckInSchema,
   type Paginated,
   type PaginationQuery,
+  type PublicCheckIn,
+  type UserCheckIn,
   updateCheckInSchema,
 } from '@coffeeroute/shared';
 import { type z } from 'zod';
@@ -11,7 +13,13 @@ import { CafeSearchCache } from '../cafes/cafe-search-cache.service';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { recomputeCafeRatings } from './cafe-ratings';
-import { checkInInclude, type CheckInRow, toCheckIn } from './checkin.mapper';
+import {
+  checkInInclude,
+  type CheckInRow,
+  toCheckIn,
+  toPublicCheckIn,
+  toUserCheckIn,
+} from './checkin.mapper';
 import { localVisitDate } from './visit-date';
 
 type CreateInput = z.output<typeof createCheckInSchema>;
@@ -80,6 +88,24 @@ export class CheckinsService {
 
   listMine(userId: string, query: PaginationQuery): Promise<Paginated<CheckIn>> {
     return this.paginate({ userId }, query, toCheckIn);
+  }
+
+  async listForCafe(cafeId: string, query: PaginationQuery): Promise<Paginated<PublicCheckIn>> {
+    const cafe = await this.prisma.cafe.findUnique({
+      where: { id: cafeId },
+      select: { status: true },
+    });
+    if (cafe?.status !== 'VERIFIED') throw cafeNotFound();
+    return this.paginate({ cafeId }, query, toPublicCheckIn);
+  }
+
+  /** A user's public visits; check-ins at cafés that are no longer verified stay hidden. */
+  async listForUser(userId: string, query: PaginationQuery): Promise<Paginated<UserCheckIn>> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+    if (!user) {
+      throw new NotFoundException({ message: 'El usuario no existe.', code: 'NOT_FOUND' });
+    }
+    return this.paginate({ userId, cafe: { status: 'VERIFIED' } }, query, toUserCheckIn);
   }
 
   async update(id: string, userId: string, input: UpdateInput): Promise<CheckIn> {

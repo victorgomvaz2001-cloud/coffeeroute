@@ -280,4 +280,42 @@ describe('Check-ins (e2e)', () => {
     await post(user.bearer, { cafeId: cafe.id, ...ratings }).expect(201);
     expect(await search()).toMatchObject({ averageRating: 4, totalReviews: 1 });
   });
+
+  it("lists a café's visits publicly, without prices", async () => {
+    const user = await signup(ctx);
+    const cafe = await createCafe(ctx);
+    await post(user.bearer, { cafeId: cafe.id, ...ratings, notes: 'Panela', pricePaid: 4 }).expect(
+      201,
+    );
+
+    const res = await ctx.http().get(`/api/v1/cafes/${cafe.id}/checkins?limit=3`).expect(200);
+    expect(res.body).toMatchObject({ total: 1, page: 1, limit: 3 });
+    expect(res.body.items[0]).toMatchObject({
+      notes: 'Panela',
+      overallRating: 4,
+      author: { id: user.user.id, name: 'Tester' },
+    });
+    expect(res.body.items[0]).not.toHaveProperty('pricePaid');
+    expect(res.body.items[0]).not.toHaveProperty('cafe');
+  });
+
+  it('hides visit lists of unverified cafés', async () => {
+    const pending = await createCafe(ctx, { status: 'PENDING' });
+    await ctx.http().get(`/api/v1/cafes/${pending.id}/checkins`).expect(404);
+  });
+
+  it("lists a user's public check-ins with the café, only for verified cafés", async () => {
+    const user = await signup(ctx);
+    const [kept, rejected] = await Promise.all([createCafe(ctx), createCafe(ctx)]);
+    await post(user.bearer, { cafeId: kept.id, ...ratings, pricePaid: 3 }).expect(201);
+    await post(user.bearer, { cafeId: rejected.id, ...ratings }).expect(201);
+    await ctx.prisma.cafe.update({ where: { id: rejected.id }, data: { status: 'REJECTED' } });
+
+    const res = await ctx.http().get(`/api/v1/users/${user.user.id}/checkins`).expect(200);
+    expect(res.body.total).toBe(1);
+    expect(res.body.items[0].cafe).toMatchObject({ id: kept.id, name: kept.name });
+    expect(res.body.items[0]).not.toHaveProperty('pricePaid');
+
+    await ctx.http().get('/api/v1/users/6f1c2a3b-4d5e-4f60-8a7b-9c0d1e2f3a4b/checkins').expect(404);
+  });
 });

@@ -17,10 +17,13 @@ import {
   checkInListQuerySchema,
   createCheckInSchema,
   type Paginated,
+  type PublicCheckIn,
+  type UserCheckIn,
   updateCheckInSchema,
 } from '@coffeeroute/shared';
 import { createZodDto } from 'nestjs-zod';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Public } from '../common/decorators/public.decorator';
 import { UuidParam } from '../common/pipes/uuid-param.pipe';
 import type { AuthUser } from '../types/auth-user';
 import { CheckinsService } from './checkins.service';
@@ -74,5 +77,23 @@ export class CheckinsController {
     @CurrentUser() user: AuthUser,
   ): Promise<void> {
     return this.checkins.remove(id, user.id);
+  }
+
+  @Public()
+  @Get('cafes/:id/checkins')
+  listForCafe(
+    @Param('id', UuidParam('El café')) id: string,
+    @Query() query: CheckInListQueryDto,
+  ): Promise<Paginated<PublicCheckIn>> {
+    return this.checkins.listForCafe(id, query);
+  }
+
+  @Public()
+  @Get('users/:id/checkins')
+  listForUser(
+    @Param('id', UuidParam('El usuario')) id: string,
+    @Query() query: CheckInListQueryDto,
+  ): Promise<Paginated<UserCheckIn>> {
+    return this.checkins.listForUser(id, query);
   }
 }
