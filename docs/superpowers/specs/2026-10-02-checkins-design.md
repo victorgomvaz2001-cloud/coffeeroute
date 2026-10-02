@@ -57,12 +57,13 @@ Mensajes de validación en español, como el resto de esquemas.
 
 ## API
 
-Nuevo módulo `apps/api/src/checkins` (`CheckinsController`, `CheckinsService`, `CafeRatingsService`, `checkin.mapper.ts`).
+Nuevo módulo `apps/api/src/checkins` (`CheckinsController`, `CheckinsService`, `cafe-ratings.ts`, `visit-date.ts`, `checkin.mapper.ts`). El recálculo son funciones puras sobre un cliente/transacción de Prisma, sin inyección, para que el seed y `CafesService` las reutilicen.
 
 | Endpoint                             | Acceso  | Comportamiento                                                                                                                                                                                                     |
 | ------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `POST /checkins`                     | Usuario | Café inexistente o no `VERIFIED` → 404 `NOT_FOUND`. Ya existe check-in hoy (violación del único, P2002) → 409 `CHECKIN_ALREADY_TODAY`, «Ya hiciste check-in aquí hoy». `@Throttle` 20 req/min. Devuelve `CheckIn`. |
 | `GET /checkins/me?page&limit`        | Usuario | Historial propio paginado (`Paginated<CheckIn>`), del más reciente al más antiguo.                                                                                                                                 |
+| `GET /checkins/:id`                  | Autor   | Un check-in propio (`CheckIn`), para la pantalla de edición. Ajeno o inexistente → 404.                                                                                                                            |
 | `PATCH /checkins/:id`                | Autor   | Si no existe o no eres el autor → 404 (como en rutas). Devuelve `CheckIn`.                                                                                                                                         |
 | `DELETE /checkins/:id`               | Autor   | Igual que `PATCH`. 204.                                                                                                                                                                                            |
 | `GET /cafes/:id/checkins?page&limit` | Público | `Paginated<PublicCheckIn>` de un café verificado (si no, 404). Más recientes primero.                                                                                                                              |
@@ -72,9 +73,9 @@ Nuevo módulo `apps/api/src/checkins` (`CheckinsController`, `CheckinsService`, 
 
 ### Recálculo de agregados
 
-`CafeRatingsService.recompute(tx, cafeId)`, siempre dentro de una transacción interactiva de Prisma:
+`recomputeCafeRatings(tx, cafeId)`, siempre dentro de una transacción interactiva de Prisma:
 
-1. `SELECT id FROM cafes WHERE id = $1 FOR UPDATE` — serializa recálculos concurrentes del mismo café.
+1. `SELECT id FROM cafes WHERE id = $1 FOR NO KEY UPDATE` — serializa recálculos concurrentes del mismo café. `NO KEY UPDATE` y no `UPDATE`: el `INSERT` en `check_ins` ya toma `FOR KEY SHARE` sobre el café por la clave foránea, y `FOR UPDATE` provocaría interbloqueos entre dos check-ins simultáneos.
 2. Un único `UPDATE cafes SET "averageRating", "totalReviews", "totalCheckIns"` calculado desde `check_ins`: `DISTINCT ON ("userId") … ORDER BY "userId", "createdAt" DESC` para la media y el número de valoraciones, `COUNT(*)` para el total. Sin check-ins, todo a 0.
 
 Lo llaman:
@@ -95,7 +96,7 @@ Patrones existentes: React Query en `lib/api`, react-hook-form + zod (`lib/forms
 - **Ficha del café (`cafe/[id].tsx`):**
   - Botón **«Hacer check-in»** junto a «Cómo llegar», solo en cafés verificados. Sin sesión → `/login`. Con `myCheckInToday` → «Check-in de hoy ✓ · Editar».
   - Sección **«Valoraciones»**: media global y tres barras (Café, Servicio, Ambiente). Estado vacío: «Sé el primero en valorar».
-  - Sección **«Visitas recientes»**: las 3 últimas (autor, fecha, puntuación, métodos como chips, nota de tasting) y «Ver todas» → `cafe/[id]/checkins.tsx` (lista paginada).
+  - Sección **«Visitas recientes»**: las 3 últimas (autor, fecha, puntuación, métodos como chips, nota de tasting) y «Ver todas» → `checkins/cafe/[id].tsx` (lista paginada).
 - **`checkin.tsx` (modal):** parámetros `cafeId` (crear) o `checkInId` (editar).
   - `components/rating-input.tsx`: 5 iconos por dimensión, `accessibilityRole="adjustable"` con acciones de incrementar/decrementar.
   - Métodos probados: chips seleccionables, primero los del café y luego «Otros».
@@ -110,7 +111,7 @@ Lógica pura en `lib/checkins.ts`: formateo de la puntuación global y ordenaci�
 
 - Se eliminan `averageRating` y `totalReviews` de `seed-data.ts`.
 - Se crean ~6 usuarios ficticios y check-ins deterministas (valoraciones, métodos, notas y fechas `visitedOn` repartidas en días pasados), más algunos del usuario demo, sobre cafés verificados.
-- Al terminar se llama a `CafeRatingsService.recompute` (o a la misma consulta SQL exportada) para cada café.
+- Al terminar se llama a `recomputeCafeRatings` para cada café.
 
 ## Errores
 
