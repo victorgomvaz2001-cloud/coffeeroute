@@ -297,7 +297,7 @@ function CheckInFormView({ cafeId, cafeName, cafeMethods, existing }: CheckInFor
               <Button
                 label="Ver café"
                 variant="ghost"
-                onPress={() => router.push({ pathname: '/cafe/[id]', params: { id: cafeId } })}
+                onPress={() => router.dismissTo({ pathname: '/cafe/[id]', params: { id: cafeId } })}
               />
               <Button
                 label="Eliminar check-in"
