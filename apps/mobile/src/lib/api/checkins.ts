@@ -108,11 +108,15 @@ export function useUpdateCheckIn(id: string) {
 }
 
 export function useDeleteCheckIn(id: string) {
+  const queryClient = useQueryClient();
   const invalidate = useInvalidateAfterCheckIn();
   return useMutation({
     mutationFn: async () => {
       await api.delete(`/checkins/${id}`);
     },
-    onSuccess: invalidate,
+    onSuccess: async () => {
+      queryClient.removeQueries({ queryKey: ['checkins', 'detail', id] });
+      return invalidate();
+    },
   });
 }
