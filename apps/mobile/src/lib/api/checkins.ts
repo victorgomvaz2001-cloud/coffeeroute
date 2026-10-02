@@ -5,14 +5,21 @@ import {
   type PublicCheckIn,
   type UpdateCheckInInput,
 } from '@coffeeroute/shared';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  type QueryKey,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useSession } from '../store/session';
 import { meQueryKey } from './auth';
 import { api } from './client';
 
 const FEED_PAGE_SIZE = 20;
 
-const nextPage = (last: Paginated<unknown>) =>
+const nextPage = (last: Paginated<unknown>): number | undefined =>
   last.page * last.limit < last.total ? last.page + 1 : undefined;
 
 async function fetchPage<T>(path: string, page: number, limit: number, signal?: AbortSignal) {
@@ -29,7 +36,13 @@ export function useCafeCheckIns(cafeId: string, limit: number) {
 }
 
 export function useCafeCheckInFeed(cafeId: string | undefined) {
-  return useInfiniteQuery({
+  return useInfiniteQuery<
+    Paginated<PublicCheckIn>,
+    Error,
+    InfiniteData<Paginated<PublicCheckIn>, number>,
+    QueryKey,
+    number
+  >({
     queryKey: ['checkins', 'cafe', cafeId, 'feed'],
     enabled: !!cafeId,
     initialPageParam: 1,
@@ -50,7 +63,13 @@ export function useMyCheckIns(limit: number) {
 
 export function useMyCheckInFeed() {
   const authenticated = useSession((s) => s.status === 'authenticated');
-  return useInfiniteQuery({
+  return useInfiniteQuery<
+    Paginated<CheckIn>,
+    Error,
+    InfiniteData<Paginated<CheckIn>, number>,
+    QueryKey,
+    number
+  >({
     queryKey: ['checkins', 'mine', 'feed'],
     enabled: authenticated,
     initialPageParam: 1,
